@@ -1,0 +1,2598 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="xGMLeUKGwAyXMdFvxSCiV6">
+<head data-page-node-id="aWUavO1AfEa8X506ceZxWV">
+<meta charset="UTF-8" data-page-node-id="xktgqJLyuLLPpCaWWfARgG" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="mDrUtRU1j7IwgxQo5yxZqr" />
+<title>潮汐训练 · Tidal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" data-page-node-id="D6ncvGJimN5mcOcHTPEeef">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin data-page-node-id="nzUooYCrG3ORDMs4RkL0D5">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" data-page-node-id="AthGfjDn9o5eGjYsJFJJSb">
+<style>
+  /* =====================================================
+     主题：浅蓝 + 鸣潮守岸人（海洋守护意象）
+     - 主色：深海蓝 #3D6FE6 → 苍青 #00C2D1
+     - 点睛：珊瑚粉 #FF8AA8 / 星光白
+     ===================================================== */
+  :root {
+    --bg-0:        #EAF3FB;
+    --bg-1:        #F5F9FF;
+    --card:        #FFFFFF;
+    --ink-1:       #0E2B4A;
+    --ink-2:       #3F5A7B;
+    --ink-3:       #8AA1BF;
+    --border:      rgba(15, 50, 95, 0.08);
+    --accent:      #3D6FE6;
+    --accent-2:    #00C2D1;
+    --accent-3:    #FF8AA8;
+    --accent-dark: #0E2B4A;
+    --primary-grad: linear-gradient(135deg, #3D6FE6 0%, #00C2D1 100%);
+    --warm-grad:   linear-gradient(135deg, #FF8AA8 0%, #FFD580 100%);
+    --ocean-grad:  linear-gradient(135deg, #1E3A8A 0%, #0EA5B7 60%, #38BDF8 100%);
+    --shadow-1: 0 8px 24px rgba(15, 50, 95, 0.08);
+    --shadow-2: 0 14px 40px rgba(15, 50, 95, 0.12);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #050a14;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink-1);
+    overflow: hidden;
+  }
+
+  /* ===== 浅蓝渐变背景 + 守岸人海浪装饰 ===== */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(1200px 700px at 80% -10%, rgba(0, 194, 209, 0.18), transparent 60%),
+      radial-gradient(900px 600px at -10% 110%, rgba(61, 111, 230, 0.16), transparent 55%),
+      linear-gradient(180deg, #050a14, #0a1428);
+    pointer-events: none;
+  }
+
+  /* ===== 手机外壳 ===== */
+  .phone {
+    width: 390px; height: 844px;
+    border-radius: 56px;
+    border: 1px solid rgba(255,255,255,0.05);
+    background: linear-gradient(180deg, #0a1428 0%, #050a14 100%);
+    padding: 10px;
+    position: relative;
+    box-shadow: 0 30px 100px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .phone-inner {
+    width: 100%; height: 100%;
+    border-radius: 48px;
+    background: var(--bg-0);
+    overflow: hidden;
+    position: relative;
+  }
+  /* 浅蓝海浪纹理（守岸人意象） */
+  .phone-inner::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 240px;
+    background:
+      radial-gradient(circle at 90% 30%, rgba(255, 138, 168, 0.18), transparent 35%),
+      radial-gradient(circle at 20% 0%, rgba(61, 111, 230, 0.25), transparent 50%),
+      linear-gradient(180deg, #DCE9FA 0%, #EAF3FB 70%, transparent 100%);
+    z-index: 0; pointer-events: none;
+  }
+  .phone-inner::after {
+    content: '';
+    position: absolute; top: 220px; left: 0; right: 0; height: 60px;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 60'><path fill='%23EAF3FB' d='M0,30 Q60,10 120,30 T240,30 T360,30 L390,30 L390,60 L0,60 Z'/></svg>") no-repeat;
+    background-size: 100% 100%;
+    z-index: 0; pointer-events: none;
+  }
+
+  /* ===== 屏幕容器 ===== */
+  .screen {
+    position: absolute; inset: 0;
+    display: none; flex-direction: column;
+    opacity: 0; transform: translateX(20px);
+    transition: opacity .3s ease, transform .3s ease;
+    z-index: 2;
+  }
+  .screen.active { display: flex; opacity: 1; transform: none; }
+
+  /* ===== 状态栏 ===== */
+  .statusbar {
+    height: 50px; padding: 14px 28px 0;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 14px; font-weight: 700; color: var(--ink-1);
+    z-index: 4; position: relative;
+  }
+  .battery {
+    width: 24px; height: 12px; position: relative;
+    border: 1.5px solid var(--ink-1); border-radius: 3px;
+  }
+  .battery::after {
+    content: ''; position: absolute; right: -3px; top: 3px;
+    width: 2px; height: 4px; background: var(--ink-1);
+    border-radius: 0 2px 2px 0;
+  }
+  .battery span {
+    position: absolute; left: 2px; top: 2px; bottom: 2px;
+    width: 65%; background: var(--accent); border-radius: 1px;
+  }
+
+  /* ===== 内容区 ===== */
+  .content {
+    flex: 1; overflow-y: auto; padding: 12px 22px 110px;
+    display: flex; flex-direction: column; gap: 16px;
+    z-index: 3; position: relative;
+    scrollbar-width: none;
+  }
+  .content::-webkit-scrollbar { display: none; }
+
+  /* ===== 通用 ===== */
+  .row { display: flex; align-items: center; }
+  .col { display: flex; flex-direction: column; }
+  .sb  { justify-content: space-between; }
+  .fill { flex: 1; }
+  .muted { color: var(--ink-3); }
+  .accent { color: var(--accent); }
+  .hot { cursor: pointer; }
+  .hot:active { transform: scale(0.97); transition: transform .1s; }
+
+  /* ===== 顶部 ===== */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .greeting { display: flex; flex-direction: column; gap: 4px; }
+  .greeting h1 {
+    margin: 0; font-size: 24px; font-weight: 800;
+    color: var(--ink-1); letter-spacing: -0.5px;
+  }
+  .greeting h1 .hi {
+    background: var(--primary-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .greeting p { margin: 0; font-size: 13px; color: var(--ink-3); }
+
+  /* ===== 头像（守岸人剪影） ===== */
+  .avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--ocean-grad);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 18px;
+    box-shadow: 0 6px 16px rgba(14, 165, 183, 0.35);
+    position: relative; cursor: pointer;
+  }
+  .avatar::after {
+    content: ''; position: absolute; inset: -3px;
+    border-radius: 50%; border: 2px solid var(--accent-3);
+    opacity: 0.6;
+  }
+
+  /* ===== 搜索框 ===== */
+  .searchbar {
+    height: 50px; border-radius: 16px;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px; padding: 0 16px;
+    box-shadow: var(--shadow-1);
+    cursor: pointer;
+  }
+  .searchbar svg { color: var(--ink-3); }
+  .searchbar.focused { border-color: var(--accent); }
+  .searchbar.focused svg { color: var(--accent); }
+  .searchbar input {
+    background: transparent; border: none; outline: none;
+    color: var(--ink-1); font-size: 14px; flex: 1;
+    font-family: inherit;
+  }
+  .searchbar input::placeholder { color: var(--ink-3); }
+
+  /* ===== 芯片 / 段 ===== */
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    white-space: nowrap; padding: 8px 16px; border-radius: 20px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--border);
+    color: var(--ink-2); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .2s ease;
+  }
+  .chip.active {
+    background: var(--ink-1); color: #fff;
+    border-color: var(--ink-1);
+  }
+
+  .seg { display: flex; gap: 4px; background: rgba(15,50,95,0.05); padding: 4px; border-radius: 14px; }
+  .seg div {
+    flex: 1; height: 34px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; color: var(--ink-3); cursor: pointer;
+  }
+  .seg div.active {
+    background: #fff; color: var(--ink-1);
+    box-shadow: var(--shadow-1);
+  }
+
+  /* ===== 今日推荐（守岸人浅蓝渐变） ===== */
+  .hero-card {
+    border-radius: 24px; padding: 20px; min-height: 160px;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
+    background: var(--ocean-grad);
+    color: #fff; position: relative; overflow: hidden;
+    box-shadow: 0 18px 40px rgba(14, 165, 183, 0.35);
+  }
+  .hero-card::before {
+    content: ''; position: absolute; right: -40px; top: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,138,168,0.4), transparent 60%);
+    pointer-events: none;
+  }
+  .hero-card::after {
+    content: '✦'; position: absolute; right: 20px; bottom: 12px;
+    font-size: 80px; color: rgba(255,255,255,0.15);
+    font-weight: 100; pointer-events: none;
+  }
+  .hero-card .tag {
+    display: inline-flex; padding: 5px 10px; border-radius: 10px;
+    background: rgba(255,255,255,0.2); font-size: 11px; font-weight: 700;
+    backdrop-filter: blur(4px);
+  }
+  .hero-card h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .hero-card .sub { font-size: 13px; opacity: 0.9; }
+  .hero-card .stat-row {
+    display: flex; gap: 12px; font-size: 12px; opacity: 0.95;
+  }
+  .hero-card .stat-row span { display: flex; align-items: center; gap: 4px; }
+  .start-btn {
+    align-self: flex-start; padding: 9px 18px; border-radius: 14px;
+    background: #fff; color: var(--accent);
+    font-size: 13px; font-weight: 700;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  }
+
+  /* ===== 段落标题 ===== */
+  .section-title {
+    font-size: 17px; font-weight: 800; color: var(--ink-1);
+    letter-spacing: -0.3px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-title .more {
+    font-size: 12px; color: var(--accent); font-weight: 600;
+  }
+
+  /* ===== 列表项 ===== */
+  .list { display: flex; flex-direction: column; gap: 10px; }
+  .list-item {
+    display: flex; align-items: center; gap: 14px; padding: 14px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-1);
+    cursor: pointer; transition: transform .15s ease;
+  }
+  .list-item:active { transform: scale(0.99); }
+  .thumb {
+    width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
+    background: linear-gradient(135deg, #E0EBFA 0%, #D8F0F2 100%);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    padding: 4px;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .item-info { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .item-title {
+    font-size: 15px; font-weight: 700; color: var(--ink-1);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .item-meta { font-size: 12px; color: var(--ink-3); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .item-dur { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+  .item-dur .t { font-size: 14px; font-weight: 700; color: var(--accent); }
+  .item-dur .l { font-size: 10px; color: var(--ink-3); }
+
+  /* ===== 标签 ===== */
+  .tag-pill {
+    display: inline-flex; padding: 3px 8px; border-radius: 8px;
+    background: rgba(61, 111, 230, 0.1); color: var(--accent);
+    font-size: 11px; font-weight: 700;
+  }
+  .tag-pill.muted { background: rgba(15,50,95,0.06); color: var(--ink-3); }
+  .tag-pill.warm { background: rgba(255,138,168,0.15); color: var(--accent-3); }
+  .tag-pill.teal { background: rgba(0,194,209,0.12); color: var(--accent-2); }
+
+  /* ===== 详情页 ===== */
+  .detail-hero {
+    border-radius: 24px; padding: 20px; height: 200px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    background: var(--warm-grad);
+    color: #fff; position: relative; overflow: hidden;
+    box-shadow: 0 18px 40px rgba(255,138,168,0.3);
+  }
+  .detail-hero::before {
+    content: ''; position: absolute; right: -50px; top: -50px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 60%);
+  }
+  .detail-hero h2 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+  .detail-hero .en { font-size: 14px; opacity: 0.85; font-weight: 500; }
+
+  .stats { display: flex; gap: 12px; }
+  .stat {
+    flex: 1; background: rgba(255,255,255,0.85);
+    border-radius: 18px; padding: 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-1);
+  }
+  .stat .v { font-size: 26px; font-weight: 800; color: var(--accent); }
+  .stat .k { font-size: 11px; color: var(--ink-3); font-weight: 600; }
+
+  /* ===== 演示区 ===== */
+  .demo-main {
+    width: 100%; height: 240px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #DCE9FA 0%, #D8F0F2 100%);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+    border: 1px solid var(--border);
+  }
+  .demo-main img { width: 78%; height: 78%; object-fit: contain; }
+  .demo-main .play-btn {
+    position: absolute; bottom: 14px; right: 14px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 16px rgba(61, 111, 230, 0.4);
+    cursor: pointer;
+  }
+  .demo-steps { display: flex; gap: 10px; margin-top: 4px; }
+  .demo-step {
+    flex: 1; border-radius: 14px;
+    background: rgba(255,255,255,0.7);
+    padding: 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; border: 2px solid transparent;
+  }
+  .demo-step.active { border-color: var(--accent); background: rgba(255,255,255,0.95); }
+  .demo-step img { width: 100%; height: 64px; object-fit: contain; }
+  .demo-step span { font-size: 11px; color: var(--ink-3); font-weight: 700; }
+
+  .demo-play {
+    align-self: flex-start; padding: 10px 16px; border-radius: 14px;
+    background: rgba(61, 111, 230, 0.1); color: var(--accent);
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .credit {
+    font-size: 10px; color: var(--ink-3); opacity: 0.7; line-height: 1.5;
+  }
+
+  /* ===== 步骤 ===== */
+  .step { display: flex; gap: 12px; align-items: flex-start; }
+  .step-num {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--primary-grad); color: #fff;
+    font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-title { font-size: 14px; font-weight: 700; color: var(--ink-1); }
+  .step-desc { font-size: 12px; color: var(--ink-3); line-height: 1.5; margin-top: 2px; }
+
+  /* ===== Tip 卡片 ===== */
+  .tip {
+    border-radius: 18px; padding: 14px;
+    background: rgba(255,138,168,0.08);
+    border: 1px solid rgba(255,138,168,0.25);
+    display: flex; gap: 12px; align-items: flex-start;
+    color: var(--ink-1); font-size: 13px; line-height: 1.5;
+  }
+  .tip svg { color: var(--accent-3); flex-shrink: 0; }
+
+  /* ===== 训练记录 / 日程通用 ===== */
+  .records-hero {
+    border-radius: 24px; padding: 20px;
+    display: flex; flex-direction: column; gap: 8px;
+    background: var(--primary-grad); color: #fff;
+    position: relative; overflow: hidden;
+    box-shadow: 0 18px 40px rgba(61, 111, 230, 0.3);
+  }
+  .records-hero::after {
+    content: '~'; position: absolute; right: -10px; top: -30px;
+    font-size: 120px; font-weight: 200; color: rgba(255,255,255,0.1);
+    font-family: 'Inter', sans-serif;
+  }
+  .records-hero .label { font-size: 13px; opacity: 0.95; }
+  .records-hero .big { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+  .records-hero .sub { font-size: 12px; opacity: 0.9; }
+
+  .stats-row { display: flex; gap: 12px; }
+  .stat-card {
+    flex: 1; border-radius: 18px; padding: 14px;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-1);
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .stat-card .val { font-size: 20px; font-weight: 800; color: var(--ink-1); }
+  .stat-card .val.accent { color: var(--accent); }
+  .stat-card .lbl { font-size: 11px; color: var(--ink-3); font-weight: 600; }
+
+  /* ===== 图表 ===== */
+  .chart-card {
+    border-radius: 18px; padding: 16px;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-1);
+  }
+  .chart-title { font-size: 13px; font-weight: 700; color: var(--ink-1); margin-bottom: 14px; }
+  .bars { display: flex; align-items: flex-end; justify-content: space-between; height: 100px; gap: 8px; }
+  .bar {
+    flex: 1; border-radius: 8px 8px 4px 4px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+    box-shadow: 0 4px 12px rgba(61, 111, 230, 0.2);
+  }
+  .bar-labels {
+    display: flex; justify-content: space-between; margin-top: 10px;
+    color: var(--ink-3); font-size: 11px; font-weight: 600;
+  }
+
+  /* ===== 日历 ===== */
+  .calendar-card {
+    border-radius: 18px; padding: 16px;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-1);
+  }
+  .weekdays { display: flex; color: var(--ink-3); font-size: 11px; margin-bottom: 14px; font-weight: 600; }
+  .weekdays span { flex: 1; text-align: center; }
+  .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .day-cell {
+    aspect-ratio: 1; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    background: rgba(15,50,95,0.04); color: var(--ink-2);
+    cursor: pointer; position: relative;
+  }
+  .day-cell.training { color: var(--accent); font-weight: 700; }
+  .day-cell.training::after {
+    content: ''; position: absolute; bottom: 4px; left: 50%;
+    transform: translateX(-50%);
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .day-cell.selected { background: var(--primary-grad); color: #fff; }
+  .day-cell.empty { background: transparent; pointer-events: none; }
+
+  /* ===== 自定义训练 ===== */
+  .overview {
+    border-radius: 20px; padding: 18px;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-1);
+  }
+  .overview h3 { margin: 0 0 14px; font-size: 18px; font-weight: 800; }
+  .stat-row { display: flex; gap: 8px; }
+  .stat-row .stat { align-items: flex-start; background: rgba(15,50,95,0.04); box-shadow: none; }
+
+  .tick-bar {
+    display: flex; gap: 8px; background: rgba(15,50,95,0.05);
+    padding: 4px; border-radius: 14px;
+  }
+  .tick {
+    flex: 1; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: var(--ink-3);
+    cursor: pointer; transition: all .2s ease;
+  }
+  .tick.active {
+    background: #fff; color: var(--accent);
+    box-shadow: var(--shadow-1);
+  }
+
+  .add-btn {
+    width: 100%; padding: 16px; border-radius: 18px;
+    border: 1.5px dashed rgba(61, 111, 230, 0.4);
+    background: rgba(61, 111, 230, 0.04);
+    color: var(--accent); font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    cursor: pointer;
+  }
+
+  /* ===== 播放器 ===== */
+  .player {
+    position: absolute; inset: 0; z-index: 5;
+    background: var(--bg-0);
+    display: none; flex-direction: column;
+  }
+  .player.active { display: flex; }
+  .player-hero {
+    height: 360px; background: var(--ocean-grad);
+    border-radius: 0 0 32px 32px; padding: 20px 24px;
+    color: #fff; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .player-hero::before {
+    content: ''; position: absolute; right: -80px; top: -80px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(255,138,168,0.4), transparent 60%);
+  }
+  .player-progress {
+    height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px;
+    overflow: hidden;
+  }
+  .player-progress span {
+    display: block; height: 100%; background: #fff;
+    border-radius: 4px; transition: width .4s ease;
+  }
+  .player-hero .step-info { display: flex; justify-content: space-between; font-size: 12px; opacity: 0.95; font-weight: 600; }
+  .player-pose {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    margin: 16px 0; padding: 16px;
+  }
+  .player-pose img { width: 70%; max-height: 200px; object-fit: contain; filter: drop-shadow(0 12px 24px rgba(0,0,0,0.2)); }
+
+  .player-meta {
+    display: flex; flex-direction: column; gap: 6px; align-items: center;
+    text-align: center;
+  }
+  .player-meta .name { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+  .player-meta .meta { font-size: 13px; opacity: 0.85; }
+
+  .player-controls {
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 16px;
+    align-items: center;
+  }
+  .timer-circle {
+    width: 200px; height: 200px; border-radius: 50%;
+    background: #fff; box-shadow: var(--shadow-2);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; position: relative;
+  }
+  .timer-circle svg {
+    position: absolute; inset: 0; transform: rotate(-90deg);
+  }
+  .timer-circle circle.bg {
+    fill: none; stroke: rgba(15,50,95,0.06); stroke-width: 10;
+  }
+  .timer-circle circle.fg {
+    fill: none; stroke: url(#timerGrad); stroke-width: 10;
+    stroke-linecap: round; transition: stroke-dashoffset 1s linear;
+  }
+  .timer-text { font-size: 56px; font-weight: 800; color: var(--ink-1); letter-spacing: -2px; }
+  .timer-label { font-size: 12px; color: var(--ink-3); font-weight: 600; letter-spacing: 1px; }
+
+  .player-buttons { display: flex; gap: 16px; align-items: center; }
+  .ctrl-btn {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #fff; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: var(--shadow-1);
+  }
+  .ctrl-btn.primary {
+    width: 72px; height: 72px; background: var(--primary-grad);
+    box-shadow: 0 12px 28px rgba(61, 111, 230, 0.4);
+  }
+  .ctrl-btn svg { width: 24px; height: 24px; }
+
+  /* ===== 底部 Tab Bar ===== */
+  .bottomnav {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 12px 21px 24px;
+    background: linear-gradient(to top, rgba(234, 243, 251, 0.95) 60%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 10;
+  }
+  .navpill {
+    height: 62px; border-radius: 32px;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid var(--border);
+    display: flex; padding: 6px; gap: 4px;
+    box-shadow: var(--shadow-2);
+  }
+  .navitem {
+    flex: 1; border-radius: 26px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; color: var(--ink-3); font-size: 10px; font-weight: 700;
+    cursor: pointer; transition: all .2s ease;
+  }
+  .navitem svg { width: 18px; height: 18px; }
+  .navitem.active {
+    background: var(--ink-1); color: #fff;
+    box-shadow: 0 6px 14px rgba(14, 43, 74, 0.25);
+  }
+
+  /* ===== 我的页面 ===== */
+  .profile-hero {
+    border-radius: 24px; padding: 24px 20px;
+    background: var(--ocean-grad);
+    color: #fff; position: relative; overflow: hidden;
+    box-shadow: 0 18px 40px rgba(14, 165, 183, 0.3);
+  }
+  .profile-hero::before {
+    content: ''; position: absolute; right: -40px; top: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,138,168,0.3), transparent 60%);
+  }
+  .profile-row { display: flex; align-items: center; gap: 16px; position: relative; z-index: 2; }
+  .profile-avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 800;
+  }
+  .profile-name { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+  .profile-tag { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+  .profile-edit {
+    position: absolute; right: 20px; top: 20px;
+    padding: 6px 14px; border-radius: 12px;
+    background: rgba(255,255,255,0.2); color: #fff;
+    font-size: 11px; font-weight: 700;
+    cursor: pointer; z-index: 2;
+    backdrop-filter: blur(4px);
+  }
+  .profile-stats {
+    display: flex; margin-top: 18px; gap: 0;
+    position: relative; z-index: 2;
+  }
+  .profile-stat {
+    flex: 1; text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.2);
+  }
+  .profile-stat:last-child { border-right: none; }
+  .profile-stat .v { font-size: 20px; font-weight: 800; }
+  .profile-stat .l { font-size: 11px; opacity: 0.85; }
+
+  .badge-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  .badge {
+    aspect-ratio: 1; border-radius: 16px;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; padding: 8px;
+    box-shadow: var(--shadow-1);
+    cursor: pointer;
+  }
+  .badge.locked { opacity: 0.4; }
+  .badge .icon {
+    font-size: 26px; width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--primary-grad);
+    color: #fff;
+  }
+  .badge.locked .icon { background: rgba(15,50,95,0.1); color: var(--ink-3); }
+  .badge .name { font-size: 10px; color: var(--ink-2); font-weight: 600; text-align: center; }
+
+  .menu-card {
+    border-radius: 18px;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+  }
+  .menu-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item .icon-box {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(61, 111, 230, 0.1); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .menu-item .icon-box.warm { background: rgba(255,138,168,0.15); color: var(--accent-3); }
+  .menu-item .icon-box.teal { background: rgba(0,194,209,0.12); color: var(--accent-2); }
+  .menu-item .label { font-size: 14px; font-weight: 600; flex: 1; }
+  .menu-item .count { font-size: 12px; color: var(--ink-3); font-weight: 600; }
+
+  /* ===== 完成提示 Toast ===== */
+  .toast {
+    position: absolute; top: 60px; left: 50%; transform: translateX(-50%) translateY(-30px);
+    background: var(--ink-1); color: #fff;
+    padding: 10px 18px; border-radius: 16px;
+    font-size: 13px; font-weight: 600;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    z-index: 100; opacity: 0;
+    transition: all .3s ease;
+    pointer-events: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.show {
+    opacity: 1; transform: translateX(-50%) translateY(0);
+  }
+  .toast svg { color: var(--accent-2); }
+
+  /* ===== 空状态 ===== */
+  .empty {
+    text-align: center; padding: 60px 20px;
+    color: var(--ink-3); font-size: 14px;
+  }
+  .empty .big-icon {
+    font-size: 48px; margin-bottom: 12px;
+    background: var(--primary-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ===== 完成动画 ===== */
+  @keyframes pulse-soft {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  /* 完成 dialog */
+  .complete-overlay {
+    position: absolute; inset: 0; z-index: 30;
+    background: rgba(14, 43, 74, 0.7);
+    backdrop-filter: blur(10px);
+    display: none; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .complete-overlay.active { display: flex; }
+  .complete-card {
+    background: #fff; border-radius: 28px;
+    padding: 32px 28px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-2);
+  }
+  .complete-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--primary-grad);
+    color: #fff; font-size: 40px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 12px 32px rgba(61, 111, 230, 0.3);
+  }
+  .complete-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .complete-sub { font-size: 13px; color: var(--ink-3); margin-bottom: 20px; }
+  .complete-stats { display: flex; justify-content: space-around; margin-bottom: 20px; }
+  .complete-stats .item { display: flex; flex-direction: column; gap: 4px; }
+  .complete-stats .v { font-size: 22px; font-weight: 800; color: var(--accent); }
+  .complete-stats .l { font-size: 11px; color: var(--ink-3); font-weight: 600; }
+  .complete-actions { display: flex; flex-direction: column; gap: 10px; }
+  .complete-btn {
+    width: 100%; padding: 14px; border-radius: 16px;
+    font-size: 14px; font-weight: 700;
+    border: none; cursor: pointer;
+  }
+  .complete-btn.primary { background: var(--ink-1); color: #fff; }
+  .complete-btn.ghost { background: rgba(15,50,95,0.05); color: var(--ink-2); }
+
+  /* 难度徽章 */
+  .diff-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 8px;
+    font-size: 11px; font-weight: 700;
+  }
+  .diff-badge.beginner { background: rgba(0, 194, 209, 0.12); color: var(--accent-2); }
+  .diff-badge.intermediate { background: rgba(61, 111, 230, 0.12); color: var(--accent); }
+  .diff-badge.advanced { background: rgba(255, 138, 168, 0.15); color: var(--accent-3); }
+
+  /* 添加动作弹窗 */
+  .modal-overlay {
+    position: absolute; inset: 0; z-index: 25;
+    background: rgba(14, 43, 74, 0.5);
+    backdrop-filter: blur(6px);
+    display: none; align-items: flex-end;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-sheet {
+    width: 100%; max-height: 80%; overflow: hidden;
+    background: var(--bg-0); border-radius: 28px 28px 0 0;
+    display: flex; flex-direction: column;
+    animation: slide-up .3s ease;
+  }
+  @keyframes slide-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .modal-handle {
+    width: 40px; height: 4px; background: var(--ink-3);
+    border-radius: 4px; margin: 12px auto;
+    opacity: 0.4;
+  }
+  .modal-header { padding: 0 22px 12px; display: flex; align-items: center; justify-content: space-between; }
+  .modal-header h3 { margin: 0; font-size: 18px; font-weight: 800; }
+  .modal-header .close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--ink-3); }
+  .modal-body {
+    flex: 1; overflow-y: auto; padding: 0 22px 24px;
+    scrollbar-width: none;
+  }
+  .modal-body::-webkit-scrollbar { display: none; }
+
+  /* 隐藏/显示 */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body data-page-node-id="Ko8BmpBxswkLRGkImKq4C2">
+  <div class="phone" data-page-node-id="drHS8VosxxjKLsAGNOBBA9">
+    <div class="phone-inner" id="app" data-page-node-id="iC4BdjemfLoQZwYHyz7lk4">
+      <svg width="0" height="0" style="position:absolute;" data-page-node-id="5oxm6nuei2uaOB8MsRVF73">
+        <defs data-page-node-id="O6MpT1HYQvkIaQzeI4E4M0">
+          <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="100%" data-page-node-id="VMQeeYllTMTYx05PmDHR31">
+            <stop offset="0%" stop-color="#3D6FE6" data-page-node-id="kDMHonj5cm8JU7JVeprnoW" />
+            <stop offset="100%" stop-color="#00C2D1" data-page-node-id="3FIa78MvPTmW1lZTBvsAj8" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <!-- Toast -->
+      <div class="toast" id="toast" data-page-node-id="W0izoAfNmZEOexymIRzFNp"></div>
+
+      <!-- ============== HOME ============== -->
+      <div class="screen active" id="screen-home" data-page-node-id="626x8G4XvjNKwY1S0TyKtk">
+        <div class="statusbar" data-page-node-id="ABEIa1Lxv1PAUK7MDyKA9o"><span id="homeClock" data-page-node-id="keYjN0AEN7ZFuGSQjUFEKG">9:41</span><div class="battery" data-page-node-id="gwHOBYNTUArj138r5GMXS1"><span data-page-node-id="MXrnHqQJhx7DuwsaD3Pliv"></span></div></div>
+        <div class="content" data-page-node-id="izii1nIFSVgyGx1DC0SIOF">
+          <div class="topbar" data-page-node-id="af0lsNZcP60wGZXiSGSjDW">
+            <div class="greeting" data-page-node-id="7CllJVqjx66lebh4Y27YyG">
+              <h1 data-page-node-id="BypwCzqiRZU5JVgxcJk4LZ"><span class="hi" data-page-node-id="bGvoDWEjVSyJ4ISHi8BTIl">你好，守岸人</span></h1>
+              <p id="homeSub" data-page-node-id="o53mFphmAEJda6dRQ3Z9E4">今天想练点什么？</p>
+            </div>
+            <div class="avatar hot" data-target="profile" data-page-node-id="JWrRGyhZH6bNueNBwv6K4P">漂</div>
+          </div>
+
+          <div class="searchbar hot" data-target="search" data-page-node-id="ACqU7qM3qSX1Yi935MwrtP">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="mK8qFx1wu7CQOsJ737U4P7"><circle cx="11" cy="11" r="7" data-page-node-id="Wve86uSJ6BzVxRrS3EdFnt"/><path d="M16 16l4 4" data-page-node-id="zvCrAvt7n4QbFv3Gg7F608"/></svg>
+            <input type="text" placeholder="搜索动作 / 器械 / 部位" readonly data-page-node-id="20e4qQcqMQ2CwRh1iFTE0N">
+          </div>
+
+          <div class="chips" id="homeChips" data-page-node-id="aT5hwiwvNZeUhC3n587zt5">
+            <div class="chip active" data-cat="all" data-page-node-id="0bE4xIVxHPjouuRypxHpc2">全部</div>
+            <div class="chip" data-cat="Chest" data-page-node-id="Y0aQkWKFYcvYaxRi2FeL1K">胸</div>
+            <div class="chip" data-cat="Back" data-page-node-id="jnPWRZcY0afJwJIgbWz0vw">背</div>
+            <div class="chip" data-cat="Legs" data-page-node-id="XFskVSEWsgSM8dN3CVCFdw">腿</div>
+            <div class="chip" data-cat="Core" data-page-node-id="BZVb1ytIGk15WAiDE4SdIm">核心</div>
+            <div class="chip" data-cat="Shoulders" data-page-node-id="NDNhDvAnqm4BechCQUyLMD">肩</div>
+            <div class="chip" data-cat="Biceps" data-page-node-id="zWvhRccchuz5bQXz47vytK">手臂</div>
+          </div>
+
+          <!-- 今日推荐 -->
+          <div class="hero-card hot" id="todayHero" data-page-node-id="m4DHwfim73bUvaCSppHGVv">
+            <div class="row sb" data-page-node-id="3XFXaqDFmgYAuaPu1s1zYc">
+              <span class="tag" data-page-node-id="ptPG9fCSEcc8b2L3npN0lF">今日推荐</span>
+              <span class="tag" id="todayTag" data-page-node-id="rUAY8VfAtELKu93SEqumub">20 min</span>
+            </div>
+            <div style="position:relative; z-index:2;" data-page-node-id="pmv3SsE5ASDfB3VwkgAmi1">
+              <h2 id="todayTitle" data-page-node-id="r2Jm2lGPhiW51tXXCd2Zqb">全身燃脂训练</h2>
+              <div class="stat-row" style="margin-top:10px;" data-page-node-id="8GmkAsavB9xZEhJozWtGUr">
+                <span id="todayStat" data-page-node-id="QVgofVThBp7IOo5GG7bAH1">8 个动作 · 强度中等 · 约 320 kcal</span>
+              </div>
+              <div style="margin-top:14px;" data-page-node-id="Y9L1An6k7ApG1SriBuDxJj">
+                <span class="start-btn" id="todayStart" data-page-node-id="cX2wnZQWokElykbkclZkzj">开始训练</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title" data-page-node-id="XKceb29bRgVwr86C7z162D">热门动作 <span class="more hot" data-target="search" data-page-node-id="DYPRBE2bf1CfThDmPCrJjA">全部 →</span></div>
+          <div class="list" id="popularList" data-page-node-id="zBLtIQwrdS1CQhe1piv5QL"></div>
+
+          <div class="section-title" data-page-node-id="MAbyY5H1V6zZWQGqsXeZZ2">为你推荐 <span class="more" data-page-node-id="orSSHSHq0TGWBwwZK5zniv">基于训练习惯</span></div>
+          <div class="list" id="recommendList" data-page-node-id="JgFrmouWG8zdzq0xdExDdi"></div>
+        </div>
+        <div class="bottomnav" data-page-node-id="U4Q7xxbRWDPgGwJeKJT0hy">
+          <div class="navpill" data-page-node-id="RaS3R0SQ1QHsB5fLZ1lPng">
+            <div class="navitem active" data-target="home" data-page-node-id="DoPY9gZIiuNIA6fkqzDRCA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="wuGlCsIiHiVDfAUnPmyXfC"><path d="M3 11l9-7 9 7" data-page-node-id="qWnhVAeAb2hfEgG0ksiUk4"/><path d="M5 10v9h14v-9" data-page-node-id="rnTpsQHvYUgG5F3mziDpT1"/></svg>首页</div>
+            <div class="navitem" data-target="search" data-page-node-id="hiCns8vDTcjlITIx6KdjI2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="kzxlZhdNNDxMAecA0ZinMf"><circle cx="11" cy="11" r="7" data-page-node-id="l8Wkaw1xOq5Hwh9EONS0L3"/><path d="M16 16l4 4" data-page-node-id="U7iUJptBUItfV0IBnoFjtl"/></svg>搜索</div>
+            <div class="navitem" data-target="records" data-page-node-id="aImFwC3zOGucpbS7nwJLAH"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="7h9pde1YCHC8tBQFvCSYKn"><path d="M3 3v18h18" data-page-node-id="wk986xcZwWYLskCjOphd78"/><path d="M18 17V9" data-page-node-id="A2D0lfQ1xxoQgGo5mLBu2a"/><path d="M13 17V5" data-page-node-id="WOdrLMGC4FChw13CjZbyZD"/><path d="M8 17v-3" data-page-node-id="AtrxMW2X0bTQKUhAbZdYnV"/></svg>记录</div>
+            <div class="navitem" data-target="schedule" data-page-node-id="XhcKuZ0PqarYDnmCFh2gqS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="fCyJLnRbvmzSNvcsCDMFbt"><rect x="3" y="4" width="18" height="18" rx="2" data-page-node-id="q8hIBsv8v2MeMXCgTBR0zj"/><path d="M16 2v4M8 2v4M3 10h18" data-page-node-id="EPuEs1TGj69yGcEsTA65lK"/></svg>日程</div>
+            <div class="navitem" data-target="profile" data-page-node-id="yPiWFaKLklhTIU1YduBpCI"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="E8F88hJh0hnHxbj9oU6iy4"><circle cx="12" cy="8" r="4" data-page-node-id="JkK8RYJFfQXwfZ3tMrkgBC"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" data-page-node-id="XzAKebQid2mucCxHvnGMsA"/></svg>我的</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== SEARCH ============== -->
+      <div class="screen" id="screen-search" data-page-node-id="lyjSp9YfnFRYX1IlpwdUZf">
+        <div class="statusbar" data-page-node-id="WQ3VgmamXygqqXE0rSxCry"><span data-page-node-id="UbOBkmqHOmPiBHB2dOGSRT">9:41</span><div class="battery" data-page-node-id="lSi8yKD4vBMXuElFGytVFc"><span data-page-node-id="b8ajdTiuh9E5yHc1lhAxGF"></span></div></div>
+        <div class="content" data-page-node-id="MXE67cUclvOOCDVCN5enXc">
+          <div class="searchbar focused" data-page-node-id="QMm8FZ0BJaIOZrX9e3OSSF">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="rYQbJRy9KxSsVGuqQiflCf"><circle cx="11" cy="11" r="7" data-page-node-id="NrgOF8MC12vKOasZEIldjo"/><path d="M16 16l4 4" data-page-node-id="VAe4LIChB80I3527BxyGGw"/></svg>
+            <input type="text" id="searchInput" placeholder="搜索动作 / 器械 / 部位" autocomplete="off" data-page-node-id="LzQ9V6RQOK72i7XB9PY0IC">
+            <svg id="searchClear" class="hot" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8AA1BF" stroke-width="2" stroke-linecap="round" style="display:none;" data-page-node-id="Aj3ENl7U2XcTuoZgbXbYEH"><path d="M6 6l12 12M18 6L6 18" data-page-node-id="U9RVDLYfHYkdsA6MVjJYqq"/></svg>
+          </div>
+
+          <div class="row sb" style="font-size:13px; font-weight:600;" data-page-node-id="uJry6ul7tp31I0JVrqhUGz">
+            <div class="row" style="gap:6px;" data-page-node-id="338UZveVXLS4NCSgme2vxB">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3D6FE6" stroke-width="2" stroke-linecap="round" data-page-node-id="8ALTuz1dyU4qbQ32luDsyQ"><path d="M4 6h16M7 12h10M10 18h4" data-page-node-id="xJvW4RGSmtY89T7584lPNW"/></svg>
+              <span data-page-node-id="kdCDfwD4BVynWyMHm37Kt0">筛选</span>
+            </div>
+            <span class="muted" id="searchCount" data-page-node-id="RVh1bwBZ9lz5fWxYq1aHbp">共 302 个动作</span>
+          </div>
+
+          <div class="chips" id="muscleChips" data-page-node-id="HUxXoDbdUXKcdCq8znKdrs">
+            <div class="chip active" data-muscle="all" data-page-node-id="qmYmIIwe2NhFH6qyNAd1M4">全部</div>
+          </div>
+
+          <div class="seg" id="equipSeg" data-page-node-id="EoDU7C7Skl49aOc0xONW4s">
+            <div class="active" data-equip="all" data-page-node-id="B2652Nu8r5eH88IHyIb1IE">全部</div>
+            <div data-equip="Bodyweight" data-page-node-id="vsx5OMEk95FMMJ6XT5hdl7">自重</div>
+            <div data-equip="Dumbbell" data-page-node-id="gOUU25uNM02KHq8EWXAvmD">哑铃</div>
+            <div data-equip="Barbell" data-page-node-id="v5JO7GoyS5Y3xZPgN49dpt">杠铃</div>
+            <div data-equip="Machine" data-page-node-id="oohqn6Cbl4fOHGF2RDWWJw">器械</div>
+          </div>
+
+          <div class="seg" id="typeSeg" data-page-node-id="Ljbsml6z67eTMb1Idkp9Rf">
+            <div class="active" data-type="all" data-page-node-id="SDVqwsTQFYsFMIFeu4NSd2">全部</div>
+            <div data-type="weight_reps" data-page-node-id="o0xxL18CeVYGTM3SBl5pe7">力量</div>
+            <div data-type="bodyweight_reps" data-page-node-id="paNOIIZVpRteL6UDOlKrAL">徒手</div>
+            <div data-type="duration" data-page-node-id="K255BqLBrDhcK9UYzvv8SA">计时</div>
+          </div>
+
+          <div class="section-title" data-page-node-id="UmWDwYhTAYCAVZz6Bi2CC5">推荐 <span class="muted" style="font-size:12px; font-weight:500;" id="searchHint" data-page-node-id="Xn83G3n7GzdZWfWIQA6qge">基于装备和部位</span></div>
+          <div class="list" id="searchList" data-page-node-id="yLmW8IY5rxUtYoRODcmv3L"></div>
+        </div>
+        <div class="bottomnav" data-page-node-id="q0wyVapEk90492z0LktRCV">
+          <div class="navpill" data-page-node-id="zBtW2qMlqsCEUXf5gPXYzv">
+            <div class="navitem" data-target="home" data-page-node-id="TgN4BaT7agmbe2KnMqoxD5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="1uddbht1qwC64E6HpjVmtD"><path d="M3 11l9-7 9 7" data-page-node-id="XrJ0VYRXiAPjRKZch2Nrud"/><path d="M5 10v9h14v-9" data-page-node-id="z9Ld2QzQi5X31priVeiJl4"/></svg>首页</div>
+            <div class="navitem active" data-target="search" data-page-node-id="0WMIFl0FSweENB2dVV1Ctc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="W6y4k2xGq3NXl2Xyv581TI"><circle cx="11" cy="11" r="7" data-page-node-id="lqTP9LA13yfFJ0Mhh4cNXU"/><path d="M16 16l4 4" data-page-node-id="wgJvjAoGBWRLNvvB131BqK"/></svg>搜索</div>
+            <div class="navitem" data-target="records" data-page-node-id="vpdzGxDGgdwrTYvzJNHs3O"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="vx65aw7vJPeKCBplTOjQ7d"><path d="M3 3v18h18" data-page-node-id="HmKfocGy682bvhRLrD3HV6"/><path d="M18 17V9" data-page-node-id="lZSx07AjHs3oSjya2Psu1p"/><path d="M13 17V5" data-page-node-id="QNB28sIPc1hzhYHTaIHY1p"/><path d="M8 17v-3" data-page-node-id="l7sKPS9Ja4h89S764v789v"/></svg>记录</div>
+            <div class="navitem" data-target="schedule" data-page-node-id="WOIssTT5MBdiKJL5l4BmHT"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="bdXZElyt0AeLXUtFjEH8GY"><rect x="3" y="4" width="18" height="18" rx="2" data-page-node-id="mK7wiarJ1yTndmS2azMl8p"/><path d="M16 2v4M8 2v4M3 10h18" data-page-node-id="weHg6y7NflLI8bFhviYCeQ"/></svg>日程</div>
+            <div class="navitem" data-target="profile" data-page-node-id="wCDYBeKQhDIuZKiuYPHigp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="L6Yfl4HLyeGCx2GHo1mJvF"><circle cx="12" cy="8" r="4" data-page-node-id="jxm9WIFT87Mwzxoc2PhEaO"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" data-page-node-id="Zs2cuo0mDNiPx5SBwTfv0V"/></svg>我的</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== DETAIL ============== -->
+      <div class="screen" id="screen-detail" data-page-node-id="b7DmgxbwqCZkiYuDstOvSI">
+        <div class="statusbar" data-page-node-id="tPSkbzITLLLGdFMjhUKX80"><span data-page-node-id="5QkYJFIDqD0iAU2yEWvgiS">9:41</span><div class="battery" data-page-node-id="EDgCBGHDstQMrNPnuAK1u8"><span data-page-node-id="6H7CT7GmbrhRKaBWaGQk9P"></span></div></div>
+        <div class="content" data-page-node-id="C5JzG9x5gFHNOG3SkTTcDh">
+          <div class="topbar" data-page-node-id="EOgvBFK5XxvSmgsoTRSHEu">
+            <div class="row hot" data-target="search" style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.8); align-items:center; justify-content:center;" data-page-node-id="7YzwcDcSDhOrbrB5cAq0Ov">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="1rhnx7AnMzSPve7DtnEM8s"><path d="M15 6l-6 6 6 6" data-page-node-id="iOrRit9oskygUkKXA3pVDd"/></svg>
+            </div>
+            <div data-page-node-id="ELXcakGS4fXehjy7BmedhR"></div>
+            <div class="row hot" id="favBtn" style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.8); align-items:center; justify-content:center;" data-page-node-id="Dr7lZ0uZ1P9oUNL8SC63IS">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8AA1BF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="p7eE9gAxZdZxHcQAkTAGoa"><path d="M12 20s-7-4.5-7-9a4 4 0 017-2.5A4 4 0 0119 11c0 4.5-7 9-7 9z" data-page-node-id="s6F9U3TOrOJz6mjTr5b8UX"/></svg>
+            </div>
+          </div>
+
+          <div class="detail-hero" data-page-node-id="0ezrE5JAn5ueT2uMbTNoxh">
+            <div class="row" style="gap:6px;" id="detailTags" data-page-node-id="0dvQZw7gWRWjFcJpvBzQbe"></div>
+            <div data-page-node-id="3Xv5OuTDaOxNf96MVx5dLq">
+              <h2 id="detailName" data-page-node-id="v8ZF1tEujFkrwKLHEpjOBT">—</h2>
+              <div class="en" id="detailEn" data-page-node-id="NnkLW6HB9sjVtcjTHwfACI">—</div>
+            </div>
+            <div style="font-size:13px; opacity:0.92;" id="detailDesc" data-page-node-id="tpGgIOl290zczEDbTX5yqo">—</div>
+          </div>
+
+          <div class="stats" data-page-node-id="om8vM7tKCu9VznXSXDWAFC">
+            <div class="stat" data-page-node-id="ctJOF3HfU3v4ChDD5ShBDn"><div class="v" id="detailSets" data-page-node-id="iixnDJAo0A2jHo1qafXdHf">—</div><div class="k" data-page-node-id="5JpZZEmUJOHrENe29IOY69">组</div></div>
+            <div class="stat" data-page-node-id="qb5WDFfeTrHeK4DDeNrv3f"><div class="v" id="detailReps" data-page-node-id="Jbn8ksQ3MLWt8uCpDuSmo6">—</div><div class="k" id="detailRepsLabel" data-page-node-id="nUChMJsSDF6f9uztUjtHS3">次 / 组</div></div>
+            <div class="stat" data-page-node-id="t8mk26ZQXIS2KFtqdqQwX2"><div class="v" id="detailRest" data-page-node-id="dWbrn5C9dGRDAKY7Arev8b">—</div><div class="k" data-page-node-id="DgsU082B0fGJk6TUDNN4FB">秒休息</div></div>
+          </div>
+
+          <div class="section-title" data-page-node-id="geJXzliEKyha2n9n2SNKTe">动作演示 <span class="more muted" style="font-weight:500; font-size:12px;" data-page-node-id="v0g346Q8iT0HZqeP9G5oan">起始 · 过程 · 结束</span></div>
+          <div class="demo-main" data-page-node-id="KoIfthBBnm0haZSC5o5o5h">
+            <img id="demoMain" src="" alt="" data-page-node-id="d8cNArX5F8OMjqtgrreIQ4">
+            <div class="play-btn hot" id="demoPlay" data-page-node-id="GrbT8rEPA0bSz2YjJRgGs6">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" data-page-node-id="7PKwxRACVS99b9reU9NHgF"><path d="M8 5v14l11-7z" data-page-node-id="MoSNFMHC2109cfPqxRAySy"/></svg>
+            </div>
+          </div>
+          <div class="demo-steps" id="demoSteps" data-page-node-id="9bI5RZRnG3czmWizmeCL09"></div>
+          <div class="credit" data-page-node-id="Zw1yZaijVGZo2DzntP4A6I">动作示意帧 © Bryl Lim（基于 Everkinetic 姿态素材）· @bryllim/workout-guide · CC BY-SA 4.0</div>
+
+          <div class="section-title" data-page-node-id="GN9mqX0Nhw7AcJmfd7NdZY">目标肌肉</div>
+          <div class="desc" id="detailMuscle" data-page-node-id="s7xeioVkPBFZGxwyCtnFLz">—</div>
+
+          <div class="section-title" data-page-node-id="7pPBuVVXKDBrPiHqpkDwqY">动作步骤</div>
+          <div class="list" style="gap:14px;" id="detailSteps" data-page-node-id="sR961w3ahAeyoVBsPEyVoR"></div>
+
+          <div class="tip" data-page-node-id="vmFp1XGJmicW5FCh5m0B62">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="B1JV9IClX0SSBOkqUKPe3c"><path d="M9 18h6M10 22h4M12 2a6 6 0 00-4 10.5c.7.8 1 1.5 1 2.5h6c0-1 .3-1.7 1-2.5A6 6 0 0012 2z" data-page-node-id="vCbhPwsSxSNMiC2LZ01cnw"/></svg>
+            <div id="detailTip" data-page-node-id="e6ZIgGUFSPsWH30wE5ZIR6">下落时控制速度，感受胸肌拉伸；推起时不要耸肩，保持肩胛稳定。</div>
+          </div>
+
+          <div class="add-btn hot" id="detailAddCustom" style="margin-top:8px;" data-page-node-id="uqqM3teErAWKjBajFYiIXl">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="GVuWx3B97mALr5tg1qBK61"><path d="M12 5v14M5 12h14" data-page-node-id="EeGO0G9oOAF3YqY35qH81t"/></svg>
+            加入自定义训练
+          </div>
+          <div class="add-btn hot" id="detailStartTrain" style="background: var(--ink-1); color: #fff; border-color: var(--ink-1);" data-page-node-id="LqDG8tzY9pEP1GWss1Bp4b">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="h5cwvWrhWqCkIB0KBewhom"><path d="M5 4l14 8-14 8V4z" data-page-node-id="I1mJRSPl7TKu3cRgVdjBsd"/></svg>
+            立即开始训练
+          </div>
+        </div>
+        <div class="bottomnav" data-page-node-id="jE9w3lmtfaBG7lN2RAVCml">
+          <div class="navpill" data-page-node-id="KIwidKNPeFJKhBd6Y8WEjL">
+            <div class="navitem" data-target="home" data-page-node-id="Vc4PSfkhBpjsXJT4G3Gn7K"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="Ak4NbQQj6nka89c95mE6tM"><path d="M3 11l9-7 9 7" data-page-node-id="4nTRRHVhkbpmj9xF5lPkZW"/><path d="M5 10v9h14v-9" data-page-node-id="BNaDSvDPtau8PHjsOrwA77"/></svg>首页</div>
+            <div class="navitem active" data-target="search" data-page-node-id="B8zNH2ejhD6S4xuWhF6f0t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="6UgqSo4lCaejSngcrYQlzP"><circle cx="11" cy="11" r="7" data-page-node-id="ADiFeFKHvIcUXGNLG8gvYe"/><path d="M16 16l4 4" data-page-node-id="QlqVRY8dZ3Le8YcYsTA5Km"/></svg>搜索</div>
+            <div class="navitem" data-target="records" data-page-node-id="wR4nJPA88mAzWePKFOHsp7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="kLdxXKaKmiJ0vSqGp1S6uJ"><path d="M3 3v18h18" data-page-node-id="jFhqPj40cf2gcnOqgnAH6u"/><path d="M18 17V9" data-page-node-id="vPHV6c8GHPKETkVw4A8DdV"/><path d="M13 17V5" data-page-node-id="wRvMbmPar5npoWN3TZAkGn"/><path d="M8 17v-3" data-page-node-id="IqDU0wNqhtPEteWbg62tG3"/></svg>记录</div>
+            <div class="navitem" data-target="schedule" data-page-node-id="9vicqNdKXGWBgOVDsHW4YM"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="lovc8VeOUCsHoG1RfQyoWe"><rect x="3" y="4" width="18" height="18" rx="2" data-page-node-id="FNYwjCP4h6QbRoIFN4426H"/><path d="M16 2v4M8 2v4M3 10h18" data-page-node-id="bEEhJQvlNjDbDmVPT0TKjg"/></svg>日程</div>
+            <div class="navitem" data-target="profile" data-page-node-id="oxxzvzwz0bsiZGrGAuZj0Q"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="w4lGleXl1CuVZtdtv1bKiB"><circle cx="12" cy="8" r="4" data-page-node-id="5jwgWpjNZXz0xCghp1FOzs"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" data-page-node-id="ju6T4Jm0LJ48v2LPB3tYLr"/></svg>我的</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== CUSTOM ============== -->
+      <div class="screen" id="screen-custom" data-page-node-id="LlIoofuXyF32hNhaVjmAVt">
+        <div class="statusbar" data-page-node-id="aXMsWcq5SpOPiTjAPMAJZT"><span data-page-node-id="vb06b1tqtMKyn9GftxGcFH">9:41</span><div class="battery" data-page-node-id="W8rnnfWJwqAPJEnBY0Fifp"><span data-page-node-id="OJ9A3v3E7yBS3450Ja4CiB"></span></div></div>
+        <div class="content" data-page-node-id="4vcsPfai8qb2ERkAhgWK41">
+          <div class="topbar" data-page-node-id="IDBDM0XBwXBZBCGkuKXtTB">
+            <div class="row hot" data-target="home" style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.8); align-items:center; justify-content:center;" data-page-node-id="4RG3YOFgNKfhGxb3TpBAg6">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="S4rAoZ1Gwf8pAoeiFtQXpG"><path d="M15 6l-6 6 6 6" data-page-node-id="25VWSBEBE9VTz1MAGZ05iA"/></svg>
+            </div>
+            <div style="font-size:18px; font-weight:800;" data-page-node-id="PIJDigs4Yb4wzsIypVHOD4">自定义训练</div>
+            <div class="row hot" id="customSave" style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.8); align-items:center; justify-content:center;" data-page-node-id="hKBBaV9f4OGeRILTZtN7yf">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00C2D1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="3PfJzQIIYG00H8bLHDuGa6"><path d="M5 13l4 4 10-10" data-page-node-id="DJ09mQuLEJhZI8Ep7NnZAj"/></svg>
+            </div>
+          </div>
+
+          <input type="text" id="customName" placeholder="训练名称"
+            style="width:100%; padding:14px 18px; border-radius:16px; border:1px solid var(--border); background:rgba(255,255,255,0.85); font-size:16px; font-weight:700; color:var(--ink-1); font-family:inherit; outline:none;" data-page-node-id="XAsKoAuB8U7LDlSGxK1T7d">
+
+          <div class="overview" data-page-node-id="VAN4PYfKDjYjjq7vB8tXFA">
+            <h3 id="customOverviewName" data-page-node-id="OwTfQmhMOR7HIJLhdkt1Zm">胸 + 核心混合</h3>
+            <div class="stat-row" data-page-node-id="Q3IhNDlPMPv7QDYJKQEW3p">
+              <div class="stat" data-page-node-id="7lWzdC0LvxcdTzX1BNSdHg"><div class="v" id="customCount" data-page-node-id="70ViYngMTyOwitVRSRYboE">0</div><div class="k" data-page-node-id="wtVH96Ocjn8PI6E9dNtx6w">个项目</div></div>
+              <div class="stat" data-page-node-id="iKuJlXy88mHySkjLSIEXsL"><div class="v" id="customDuration" data-page-node-id="n1GArCWruE44nSJ9mVmZBO">~0</div><div class="k" data-page-node-id="p2BJ2qLFPZOYqXDKoeN8cH">分钟 总时长</div></div>
+              <div class="stat" data-page-node-id="7J4ChO4urd3O3GrWXO8BBF"><div class="v" data-page-node-id="4K7NnvEhP9PUFDySClxy8T"><span id="customRest" data-page-node-id="gNzdZPo6D3i4VjguA6yj82">30</span>s</div><div class="k" data-page-node-id="kS1aquYg8JuvpJVv60rmio">组间休息</div></div>
+            </div>
+          </div>
+
+          <div class="section-title" style="font-size:13px; font-weight:600; color:var(--ink-3); margin-top:-4px;" data-page-node-id="xMxzYDS7hc5qT9p1R1g7rA">组间间隔预设（秒）</div>
+          <div class="tick-bar" id="tickBar" data-page-node-id="v05MP81IvmnxhSDiBu0llc">
+            <div class="tick" data-value="15" data-page-node-id="M3EeOYz0fwIDUqT0v4fORg">15</div>
+            <div class="tick active" data-value="30" data-page-node-id="pFvw1i5Bcm5GMQVklkpjYa">30</div>
+            <div class="tick" data-value="45" data-page-node-id="2P1M3tbgLqhlzdBahjil6B">45</div>
+            <div class="tick" data-value="60" data-page-node-id="Kij5ajntmqswLOeptjPsVp">60</div>
+          </div>
+
+          <div class="section-title" data-page-node-id="v0xFFvUSHEMFL5xBZRTf4k">训练项目</div>
+          <div class="list" id="customList" data-page-node-id="oFzSZXOVtmMEHifzB4U2qP">
+            <div class="empty" data-page-node-id="FJBr8RvrH4tHthnICATDwv">
+              <div class="big-icon" data-page-node-id="nHktJ5SJsQlAzEClxDo31x">＋</div>
+              <div data-page-node-id="PCb2KCEg7JlGNG4aiPYq3h">还没有动作，点击下方添加</div>
+            </div>
+          </div>
+
+          <div class="add-btn hot" id="addCustomBtn" style="margin-top:4px;" data-page-node-id="7SCymdedxNPiJFHtcnFng2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="OSTeefFK9e1QaQLh1owPm6"><path d="M12 5v14M5 12h14" data-page-node-id="CWU6bdcj82FjLhUYwRW0EQ"/></svg>
+            添加动作
+          </div>
+          <div class="add-btn hot" id="customStart" style="background: var(--ink-1); color: #fff; border-color: var(--ink-1);" data-page-node-id="93fGZEsHJLvEfB28dPn92v">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="lJEuluLELu9R90rArLRNBh"><path d="M5 4l14 8-14 8V4z" data-page-node-id="Wzauxz2RDf1cqBpbsNJ6ar"/></svg>
+            保存并开始训练
+          </div>
+        </div>
+        <div class="bottomnav" data-page-node-id="phweb9Ez6quNj6zVar1kce">
+          <div class="navpill" data-page-node-id="ms4b68EQ6jU2aALXGcYIDu">
+            <div class="navitem active" data-target="home" data-page-node-id="xJ3Mg3RMb1N28oBDoYBlhX"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="QaPNsQVKCegOOTcJIbBhT6"><path d="M3 11l9-7 9 7" data-page-node-id="O0DO6xJh3s1v3dWaKmZoKZ"/><path d="M5 10v9h14v-9" data-page-node-id="UuTWpnPSnhzgNoOwu6g6OV"/></svg>首页</div>
+            <div class="navitem" data-target="search" data-page-node-id="bGtpNPG7vQe8R2HKcb4Alb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="AnRznOwLh6WLE5sC76pTOa"><circle cx="11" cy="11" r="7" data-page-node-id="ENjsefFnbyma3Ku7IvZ0SG"/><path d="M16 16l4 4" data-page-node-id="dX9ivGG4qnFd7NN6UNmAGQ"/></svg>搜索</div>
+            <div class="navitem" data-target="records" data-page-node-id="TfyXh0kqh9H73FQ5DVqphA"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="RDCAHRFBCI88aVF03bOIa5"><path d="M3 3v18h18" data-page-node-id="qF3pJ70VEEVBx1b29agkPE"/><path d="M18 17V9" data-page-node-id="5OEAdsCJfJuEEs4WDzIVQi"/><path d="M13 17V5" data-page-node-id="zVfjS0HJyJjZ2XGICVsbb1"/><path d="M8 17v-3" data-page-node-id="S2R7PnF49xgsrDpEuqytBD"/></svg>记录</div>
+            <div class="navitem" data-target="schedule" data-page-node-id="Bot4lrcrsXZ49FWltf25hC"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="jdHSHAwuac9loEf5UjgAY7"><rect x="3" y="4" width="18" height="18" rx="2" data-page-node-id="40gycNvTInn1b1RJBTEhOv"/><path d="M16 2v4M8 2v4M3 10h18" data-page-node-id="T9ZI99tSoxRSoVHHWV5lnx"/></svg>日程</div>
+            <div class="navitem" data-target="profile" data-page-node-id="aIrbP0CgHfUxBXxCR08ER0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="JPmcG3tnyhqHqK0CAUsibH"><circle cx="12" cy="8" r="4" data-page-node-id="sH6pWMvPPvCumPE3AnxHfc"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" data-page-node-id="Jq5f38SjA7FR9u6N3aAAx4"/></svg>我的</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== RECORDS ============== -->
+      <div class="screen" id="screen-records" data-page-node-id="V7xRZtIfpmjeeDKrHVvCrb">
+        <div class="statusbar" data-page-node-id="NUzDEGnutk7lGqQvlgKhLu"><span data-page-node-id="g2mN9RjifdRygWtB36Wpsp">9:41</span><div class="battery" data-page-node-id="qWIMA4AJ8ecVcR6o2lZ8RN"><span data-page-node-id="JIiSKJiDw1V7lDMtYUysLo"></span></div></div>
+        <div class="content" data-page-node-id="oiPC407omuGZJkbjm4VsxG">
+          <div class="topbar" data-page-node-id="0IdHnijTEw45ckUneDdID5">
+            <h1 style="margin:0;font-size:22px;font-weight:800;letter-spacing:-0.3px;" data-page-node-id="LMQXYAVEvCu4YWCXIo34Mm">训练记录</h1>
+            <div class="chip" data-page-node-id="E12g2MN5H1QFvKBeaUNe1O">本月 ▾</div>
+          </div>
+          <div class="records-hero" data-page-node-id="9yL1xHs8wO17GTAkKLUOSI">
+            <div class="label" data-page-node-id="AepGkEcCLW3f1dxvfRwUnF">本月累计训练时长</div>
+            <div class="big" id="monthTotal" data-page-node-id="eeuTX95Y2IEhZJODGtmS5T">—</div>
+            <div class="sub" id="monthSub" data-page-node-id="LCAbt1LCLopVnNhOARmvrG">—</div>
+          </div>
+          <div class="stats-row" data-page-node-id="G4BxWxcbU0yGxVjcwdp01u">
+            <div class="stat-card" data-page-node-id="AVXVAASDrB7yIFNQMTYDbZ"><div class="val accent" id="monthKcal" data-page-node-id="WehhEyBToWtNVDC7xOCC6u">—</div><div class="lbl" data-page-node-id="E81x7wuhyfpxfZBLxsDh9m">千卡消耗</div></div>
+            <div class="stat-card" data-page-node-id="lnHq6yEV4YEsmuDqqqYDJa"><div class="val" id="monthCount" data-page-node-id="UUZ48RjkpXovk66aqplLw0">—</div><div class="lbl" data-page-node-id="9EXhmOVfooS5i99UhdaE2B">训练次数</div></div>
+            <div class="stat-card" data-page-node-id="sDUMJwG2HNDXJrAH5Bds8T"><div class="val" id="streakDays" data-page-node-id="rIzRFXsnI4j0kNigK10kMK">—</div><div class="lbl" data-page-node-id="1MAEQwphwuZprQb8UxNA5o">连续天数</div></div>
+          </div>
+          <div class="chart-card" data-page-node-id="8FnN8lMLETK5OiWDNxI1OT">
+            <div class="chart-title" data-page-node-id="sAupaB63Q8juo9abHOup5B">本周训练分布（分钟）</div>
+            <div class="bars" id="weekBars" data-page-node-id="6fPKMxJq1zWNjXnLraA5AX"></div>
+            <div class="bar-labels" data-page-node-id="RpKM2A6RrBnJtURASAAOz2"><span data-page-node-id="eDgveQMyalmDvGovHosdce">一</span><span data-page-node-id="HuGljSJ0LUMRxKo94AZ5IX">二</span><span data-page-node-id="7SkCWFpVP533CHLTUoNFRl">三</span><span data-page-node-id="Ul3bS0D5dFmQmWiPpVEdcH">四</span><span data-page-node-id="noTS7ADq7UxcnUjfriExjF">五</span><span data-page-node-id="xyt5anVkt4H5Gix0vtmKhX">六</span><span data-page-node-id="jVnDt6DVIYRMfCh18YdV9N">日</span></div>
+          </div>
+          <div class="section-title" data-page-node-id="lGooLhezCY7ISR2SFukYCd">训练历史 <span class="more muted" style="font-weight:500;" data-page-node-id="KJhAfuQTV8LTNtDyDEYM4b">最近 10 次</span></div>
+          <div class="list" id="historyList" data-page-node-id="dA5YgjftEsGOstazfe4ER3">
+            <div class="empty" data-page-node-id="TR2WF9JIFJbtQvCVyisWOT">
+              <div class="big-icon" data-page-node-id="OLxxazTYYONyvcEWs1e7BN">~</div>
+              <div data-page-node-id="sBVXxb8oSj3KNr72YisNci">还没有训练记录</div>
+              <div style="font-size:12px; margin-top:4px;" data-page-node-id="oRZfHKiphIf7KAg73lDHiC">完成一次训练就会自动记录</div>
+            </div>
+          </div>
+          <div class="add-btn hot" data-target="custom" style="margin-top:4px;" data-page-node-id="BDnhPnwjafbN6D2fM5xinB">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="uFG2oYJH4PzUjEirJK2QNx"><path d="M12 5v14M5 12h14" data-page-node-id="BgZbMrbOxwDNkiE5atmGvz"/></svg>
+            编辑自定义训练组合
+          </div>
+        </div>
+        <div class="bottomnav" data-page-node-id="lO2Ok4iMEBa6nvALFrDKGP">
+          <div class="navpill" data-page-node-id="RzHWSgdHaPH0fYA0g4G4s1">
+            <div class="navitem" data-target="home" data-page-node-id="75GWHPyMobCt3gqQK7SHb6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="OYgDKLKsA2PoOUHNefdoY8"><path d="M3 11l9-7 9 7" data-page-node-id="D592NtzlrR6XZjtQCnH5sh"/><path d="M5 10v9h14v-9" data-page-node-id="SU0stN5lpI3mLhykY2MuLr"/></svg>首页</div>
+            <div class="navitem" data-target="search" data-page-node-id="nT3kAudMQgZaYUM8gOzDHi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="PSbstSVfZCVZjh6Ifnk3dr"><circle cx="11" cy="11" r="7" data-page-node-id="BDhplD0yBHV0hD9exWBm4U"/><path d="M16 16l4 4" data-page-node-id="l41ci7c4ReiMzCY3icOc9G"/></svg>搜索</div>
+            <div class="navitem active" data-target="records" data-page-node-id="WJVjKwNTXfEorOCBKa8wBY"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="ObKzuckMygI3d9EF0LkFjn"><path d="M3 3v18h18" data-page-node-id="iY0q8pcZpmjnYAxz8xzp8e"/><path d="M18 17V9" data-page-node-id="Tg4fGMiGI1oLjChRfOicJc"/><path d="M13 17V5" data-page-node-id="urPHGXwUGFjz9CgQdkwVWy"/><path d="M8 17v-3" data-page-node-id="LDKIuZ7wg3MNAzsSrFTWxa"/></svg>记录</div>
+            <div class="navitem" data-target="schedule" data-page-node-id="q1lJ8IZ24B09wBlnt1jz1E"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="CrGimDmwGwt1m1aXWndFoV"><rect x="3" y="4" width="18" height="18" rx="2" data-page-node-id="GZBdNA7MAomZkPGx9QfvrY"/><path d="M16 2v4M8 2v4M3 10h18" data-page-node-id="2s0yUuKM3k7euSb5Qnf6q4"/></svg>日程</div>
+            <div class="navitem" data-target="profile" data-page-node-id="hsCkclL4GhpCJ5hEzpSofS"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="CeXWakBrArWOZDLABz6tDp"><circle cx="12" cy="8" r="4" data-page-node-id="OUBriNbZUoOsu6sqfiqZDQ"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" data-page-node-id="RuS5FOnMt8wC7Zd37TfAEt"/></svg>我的</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== SCHEDULE ============== -->
+      <div class="screen" id="screen-schedule" data-page-node-id="19zejSAlvW4qSUzn6Hot6m">
+        <div class="statusbar" data-page-node-id="Kt6frINQYsE6Iq1C1Rh6Ec"><span data-page-node-id="hFBHwH0rHrxlP1rV59mYvW">9:41</span><div class="battery" data-page-node-id="hGrTeAekEDeiJmH0y4H4uE"><span data-page-node-id="f1fyLRS6f0p4J038Gy9WdT"></span></div></div>
+        <div class="content" data-page-node-id="51rSE3U1kwsfwldz1kBTgQ">
+          <div class="topbar" data-page-node-id="BTWoDsLyVJkyQOSqwINJlB">
+            <h1 style="margin:0;font-size:22px;font-weight:800;letter-spacing:-0.3px;" data-page-node-id="DzsDs2e7Cw2YTYhGdCHQGt">训练日程</h1>
+            <div class="chip" id="calMonthChip" data-page-node-id="VaPiG5Z7vjUmKNWvTJYDYR">2026年9月 ▾</div>
+          </div>
+          <div class="calendar-card" data-page-node-id="pFgBT4BstGdm5rcFqtoMsx">
+            <div class="weekdays" data-page-node-id="PQWo7trFWVVRobEfuJ5yoN"><span data-page-node-id="P0I7dtu4Df9dMn5w93esWO">日</span><span data-page-node-id="KOSuEe5aoD5HVHykKshFDe">一</span><span data-page-node-id="yTk9aFEjBDhwGOp3KsH6mm">二</span><span data-page-node-id="TUvBCiHmbQubb0SgbCaUNA">三</span><span data-page-node-id="PXflc1cEGhwkC5sjo9hkpW">四</span><span data-page-node-id="tq8MWbjpZJK6nMXpZByQrw">五</span><span data-page-node-id="gcZYQMYXxLGYq6JSwm0okv">六</span></div>
+            <div class="days-grid" id="daysGrid" data-page-node-id="vMuL5uGdECVI9q3WTAuOu0"></div>
+            <div style="font-size:11px; color:var(--ink-3); margin-top:12px; display:flex; gap:12px;" data-page-node-id="W4hTZNKfWRCyE3xs1dkVVJ">
+              <span style="display:flex; align-items:center; gap:4px;" data-page-node-id="9NUOAEi2gd3v1Om9SxrEdo"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);" data-page-node-id="AyC3elvULvM6AZtPCD3BuA"></span>有训练</span>
+              <span style="display:flex; align-items:center; gap:4px;" data-page-node-id="FauRSIfXs7VDpUME2TYDYy"><span style="width:8px;height:8px;border-radius:50%;background:var(--primary-grad);" data-page-node-id="MWfzpnFv7y8WPJGTghWw3M"></span>已选</span>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top:6px;" data-page-node-id="HqtUDeb7yEBAvcUn5T4AkY">
+            <span id="scheduleDateLabel" data-page-node-id="6t3jzF1KQgrcQwN4IBKdtK">— · <span class="accent" data-page-node-id="ODIl5Z2gxcfmEQsBXxsmDx">已安排 0 项</span></span>
+          </div>
+          <div class="list" id="scheduleList" data-page-node-id="bCbNNffy7d11Gt2Ei51WF4">
+            <div class="empty" data-page-node-id="CV0QgO6Ci16cF094a3hWGA">
+              <div class="big-icon" data-page-node-id="UUzatFCFVXApOt3RBEdg4Y">◌</div>
+              <div data-page-node-id="uctG2wOXZ6yHhRUVO95LFm">今天还没有安排训练</div>
+              <div style="font-size:12px; margin-top:4px;" data-page-node-id="wmQixg2COqfHyP6y3ysdAS">从「我的」选择训练组合安排到这一天</div>
+            </div>
+          </div>
+
+          <div class="add-btn hot" id="scheduleAdd" data-page-node-id="qccOX0fuwtjoEtia3rGVp3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-page-node-id="LqhWUdL6ZZEJLjAw8rUSEv"><path d="M12 5v14M5 12h14" data-page-node-id="TovppWyG9KykXLKd0hrkKx"/></svg>
+            安排训练
+          </div>
+        </div>
+        <div class="bottomnav" data-page-node-id="lx6goztPURzeAHqZaOC7wr">
+          <div class="navpill" data-page-node-id="dsBHLP5XCyFmoPXst0pL7y">
+            <div class="navitem" data-target="home" data-page-node-id="YGJNoinDPmNvABsrGlYDVF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="CN0FvPpX2FSGyMok8n3VzC"><path d="M3 11l9-7 9 7" data-page-node-id="yHPcFHMcYKgoRJJkU5iTy9"/><path d="M5 10v9h14v-9" data-page-node-id="kqEtYo28S60t0gvU5BfmZv"/></svg>首页</div>
+            <div class="navitem" data-target="search" data-page-node-id="fgzMox5WBAMtlxh7KpLrrL"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="BKbocGcflzueCovIC9ziZ4"><circle cx="11" cy="11" r="7" data-page-node-id="LejEx1yqPK8anbvscx8457"/><path d="M16 16l4 4" data-page-node-id="AHPH314JwclSaCQXlhwWGz"/></svg>搜索</div>
+            <div class="navitem" data-target="records" data-page-node-id="DFM6GAtLAoLbdnPfy6OWDb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="a8CvoB6QbVPtn9K8iVYna2"><path d="M3 3v18h18" data-page-node-id="nLslVMKnyCNqZHNyQTtI4j"/><path d="M18 17V9" data-page-node-id="1giio0HyQG9u5TJ7ET71jn"/><path d="M13 17V5" data-page-node-id="Rtzzl9oBgcOOtW7yRw7Nzz"/><path d="M8 17v-3" data-page-node-id="IrAYZHgaGJCvpz58uh69be"/></svg>记录</div>
+            <div class="navitem active" data-target="schedule" data-page-node-id="k3wfEUGvh7Aax5snWpVQON"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="VrhroCHIsH87ZYrrN4dzY9"><rect x="3" y="4" width="18" height="18" rx="2" data-page-node-id="Xya6tHSiy1rcjRNKnZF4t1"/><path d="M16 2v4M8 2v4M3 10h18" data-page-node-id="JlYaKV96GZje3mnvZ8cYNl"/></svg>日程</div>
+            <div class="navitem" data-target="profile" data-page-node-id="SBLZWsM4WT1waMHHB6kn85"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="VHdoZVgDQDSueHwYcXcByM"><circle cx="12" cy="8" r="4" data-page-node-id="k89V1EXHWPInbiUFjiGaAo"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" data-page-node-id="qjqND9xLthWiw4R1SiI16J"/></svg>我的</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== PROFILE ============== -->
+      <div class="screen" id="screen-profile" data-page-node-id="UcI1A5nQTW96mKqJb5Uy9y">
+        <div class="statusbar" data-page-node-id="gJOuYTAVCOCxzG82G95YmC"><span data-page-node-id="lERqM1eZo8FztfLYNEqACY">9:41</span><div class="battery" data-page-node-id="SB8Cq5V3jIBZPYy3n5TIqq"><span data-page-node-id="euwEJr7xMet5OXdkzz1pYn"></span></div></div>
+        <div class="content" data-page-node-id="x9Qq9hMomISUABaHtF1kDC">
+          <div class="profile-hero" data-page-node-id="6l89LbHrvwROHRnWGvc93Y">
+            <div class="profile-edit hot" id="editProfile" data-page-node-id="7N1oBi73U06husbc0yQGHg">编辑</div>
+            <div class="profile-row" data-page-node-id="q6l1jsVcte5dCfYAiEfraB">
+              <div class="profile-avatar" data-page-node-id="BxpkWMykgOxo2hoFCbjdeF">漂</div>
+              <div data-page-node-id="Jj11jylFnbmq4Xz9hhqU7E">
+                <div class="profile-name" data-page-node-id="CKdPmMqeXUDgo8ixeE05kr">漂泊者</div>
+                <div class="profile-tag" id="profileLevel" data-page-node-id="a5xnDC8xiGILBw222gk8ni">Lv.1 海洋见习守护</div>
+              </div>
+            </div>
+            <div class="profile-stats" data-page-node-id="XYkmwS97skeazUmY3deDmS">
+              <div class="profile-stat" data-page-node-id="l0pnYHNXp9ohKVdt132vNs"><div class="v" id="profileDays" data-page-node-id="d8VxtD4AAEHOsG47UhOdF5">0</div><div class="l" data-page-node-id="WgBEvuMghOvJHLQkJZNIVs">训练天数</div></div>
+              <div class="profile-stat" data-page-node-id="jlLfqybpkC9oz9N5Mv0yCe"><div class="v" id="profileMinutes" data-page-node-id="OM9fAnQfgbtg9SFXphr2sf">0</div><div class="l" data-page-node-id="uMMSPuia7k54DesvJPWcvi">总分钟</div></div>
+              <div class="profile-stat" data-page-node-id="669qYI1pI4ZEJT66vs3g3Q"><div class="v" id="profileKcal" data-page-node-id="i76D4wjDv0tBD2oRmygaN5">0</div><div class="l" data-page-node-id="3nYqKoSgXV4UfWxjv4t2Rr">总千卡</div></div>
+            </div>
+          </div>
+
+          <div class="section-title" data-page-node-id="M91VI4J6c0kUJkzo3BAiq4">我的成就 <span class="more muted" style="font-weight:500;" id="badgeCount" data-page-node-id="UmVhcPbYn2660IEmmJTNiL">0 / 8</span></div>
+          <div class="badge-grid" id="badgeGrid" data-page-node-id="iXw7wtzIt0PRV0VTerGoaz"></div>
+
+          <div class="section-title" style="margin-top:8px;" data-page-node-id="V9GdAq5kEgEllYDc3ycXs6">快捷入口</div>
+          <div class="menu-card" data-page-node-id="tek2YF2xGhdfdg50lRPWml">
+            <div class="menu-item hot" data-target="custom" data-page-node-id="Ex12YgaZu9CYQGC924PvjD">
+              <div class="icon-box" data-page-node-id="8CHE6LKYNRH22bGEuOtctn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="KqvPo6MKCxzohG94FmSz2H"><path d="M3 6h18M3 12h12M3 18h8" data-page-node-id="urqAxyLiADRYl2YYsRVPTX"/></svg>
+              </div>
+              <div class="label" data-page-node-id="GmgTnFanYsnwe7YUEvmTY7">我的训练组合</div>
+              <div class="count" id="myRoutinesCount" data-page-node-id="7ysXjj7oT6yGxHqMPL3syf">0 套</div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8AA1BF" stroke-width="2" stroke-linecap="round" data-page-node-id="pmA7hzFhOl56dcwPtfXc3P"><path d="M9 6l6 6-6 6" data-page-node-id="8mCMng7ZIrBHHT0PEYBZKo"/></svg>
+            </div>
+            <div class="menu-item hot" id="favMenu" data-page-node-id="GB67DIFEnMPINz30E5cUy2">
+              <div class="icon-box warm" data-page-node-id="FBvZyrjSdMh5KQjODyG89R">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="Muy8Tdn4TcFvTICj6khubX"><path d="M12 20s-7-4.5-7-9a4 4 0 017-2.5A4 4 0 0119 11c0 4.5-7 9-7 9z" data-page-node-id="BMylta39pXSb6vCTc9gawi"/></svg>
+              </div>
+              <div class="label" data-page-node-id="CCQxFDpQq9Pbi8QHYTOXcN">收藏的动作</div>
+              <div class="count" id="favListCount" data-page-node-id="IABPLHEjqugH8W90FNbCr5">0 个</div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8AA1BF" stroke-width="2" stroke-linecap="round" data-page-node-id="cww3KzbbhUl1mFCddbgzfF"><path d="M9 6l6 6-6 6" data-page-node-id="NgCgPMBL3byoATGaH64qaO"/></svg>
+            </div>
+            <div class="menu-item hot" data-target="records" data-page-node-id="OVoAE3VCKY2YJUF7yHbmHe">
+              <div class="icon-box teal" data-page-node-id="OMuzgzylKbZBfCdBSSsUPI">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="wQjNfbuVLvguhgfKGcSUCV"><path d="M3 3v18h18" data-page-node-id="8XJB5u0Y6LGd0Kdj5YQJJX"/><path d="M18 17V9" data-page-node-id="bLin3QAEw2FCd5RkWqXDTL"/><path d="M13 17V5" data-page-node-id="utvm2p7S3i7SPR39dkxIUq"/><path d="M8 17v-3" data-page-node-id="LuPsK8ovpEq9XPfcMv8bj7"/></svg>
+              </div>
+              <div class="label" data-page-node-id="Al6Gfw5HbTQmzzEYhVyeLT">训练记录</div>
+              <div class="count" data-page-node-id="WKLOC0Oz7wvsgTT2kNpgrc">查看</div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8AA1BF" stroke-width="2" stroke-linecap="round" data-page-node-id="K8HZ4vOHqNfdKHaJsnF83O"><path d="M9 6l6 6-6 6" data-page-node-id="gPvHJTlbFc2pBjdrS4fC7f"/></svg>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-top:8px;" data-page-node-id="DWf6fWa8TwCuYHpTX8uFZt">设置</div>
+          <div class="menu-card" data-page-node-id="KyGkMj2f4QhdWD655U40Iy">
+            <div class="menu-item" data-page-node-id="D9Na30esjfdOQHaUBnmEup">
+              <div class="icon-box" data-page-node-id="BeD6dUkYmXBonbofCD50e1">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="zMi9sIzmlBXmB0nxgFeYHq"><circle cx="12" cy="12" r="9" data-page-node-id="Z16MEpxUau4RTFneSqAYd5"/><path d="M12 7v5l3 2" data-page-node-id="6XVqK7JVgdQsgoSw6qhtVl"/></svg>
+              </div>
+              <div class="label" data-page-node-id="XB41QxONncV5Fvj84X27po">提醒时间</div>
+              <div class="count" data-page-node-id="QeKVGtW2kqY8F2sLBxfb4U">每天 19:00</div>
+            </div>
+            <div class="menu-item" data-page-node-id="0Lk5sH7d2gsNGaf7IOh6mw">
+              <div class="icon-box warm" data-page-node-id="JreHoo8GDs1MgJVITXSJhF">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="VGWF4AWG1gCeUJFESclxC0"><circle cx="12" cy="12" r="3" data-page-node-id="kl3SfmtoCAou3IuqugpNnq"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" data-page-node-id="lLREFNiVLy8TclJThLO9y7"/></svg>
+              </div>
+              <div class="label" data-page-node-id="893BigdKlBzyXpxTpIbKiY">训练偏好</div>
+              <div class="count" data-page-node-id="v3YOuq0BSIleEzrqHDbVOQ">3 项</div>
+            </div>
+            <div class="menu-item hot" id="resetBtn" data-page-node-id="v95WHD0WChPvDYLRGiNaPe">
+              <div class="icon-box" style="background:rgba(255,138,168,0.15); color:#FF8AA8;" data-page-node-id="34DGUmn3yw4rAELrPDI3Po">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="mHq9EGXfPmBSyLwRO8CIry"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" data-page-node-id="wMLWrhQVqrOhkWJADMSqQE"/></svg>
+              </div>
+              <div class="label" style="color:#FF8AA8;" data-page-node-id="FwcDyZCoWnZD2JbphPQfjX">清空所有数据</div>
+              <div class="count" data-page-node-id="5J7ki59KCNo4gXv99sSG5i">不可恢复</div>
+            </div>
+          </div>
+        </div>
+        <div class="bottomnav" data-page-node-id="jhdTZOOk36qhvtiBzPAgPu">
+          <div class="navpill" data-page-node-id="cjDYSExy2pHnCshVNEnfM7">
+            <div class="navitem" data-target="home" data-page-node-id="h7hQaCDFAfVDfJ2UtYqrhl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="cBKhYqhjQXn8zCnDPXKcfJ"><path d="M3 11l9-7 9 7" data-page-node-id="97MKjeaBc8fKHibwvV80mg"/><path d="M5 10v9h14v-9" data-page-node-id="CCKdv83yQJDu7TbKP9xjyP"/></svg>首页</div>
+            <div class="navitem" data-target="search" data-page-node-id="qRZUzAk7yBV1lb3kM7AMEc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="B02psnhjepd5i7Vvw9dhGH"><circle cx="11" cy="11" r="7" data-page-node-id="nND3SDKj7zomXyLayIBrfY"/><path d="M16 16l4 4" data-page-node-id="29mBcA8kMX22Xp1yrAYLvV"/></svg>搜索</div>
+            <div class="navitem" data-target="records" data-page-node-id="VtnXyBd4b1rBG7tyeRQB2N"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="sHpCOUX8yxbweLrKPs8Tzk"><path d="M3 3v18h18" data-page-node-id="zve4Wf4XtQsx280poBFTo5"/><path d="M18 17V9" data-page-node-id="o2gnwn1XTeA2fPwm1t0WGj"/><path d="M13 17V5" data-page-node-id="zoINhBxjlspgBMb6x7JJPu"/><path d="M8 17v-3" data-page-node-id="c3vE2uPmE0vt8wwBLjsskX"/></svg>记录</div>
+            <div class="navitem" data-target="schedule" data-page-node-id="AZjEDowGnzvttGsoxZLJRC"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="IGCE1JTF2GBvhyYKVXTAs9"><rect x="3" y="4" width="18" height="18" rx="2" data-page-node-id="Mp6rjPJDdYugsKvbfocxiH"/><path d="M16 2v4M8 2v4M3 10h18" data-page-node-id="NuQDuEynZBb89XgwQhkELU"/></svg>日程</div>
+            <div class="navitem active" data-target="profile" data-page-node-id="kQ8RixQMq6cFlu4DujbEBv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="7qghQ0OmjQ5TSkO2BMXCni"><circle cx="12" cy="8" r="4" data-page-node-id="UhPjYInGkFxCOebTuZ07ah"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" data-page-node-id="RYc4nd33q5lZNumTMo6uX3"/></svg>我的</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== PLAYER ============== -->
+      <div class="player" id="player" data-page-node-id="OrFuRbt1BTUliEk9UQrlMk">
+        <div class="player-hero" data-page-node-id="fc1hqIMapVzeyOMc5r9GP3">
+          <div class="row sb" data-page-node-id="KXlR8WYRUCEPnxhCdvfsGV">
+            <div class="row hot" id="playerClose" style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.2); align-items:center; justify-content:center; cursor:pointer;" data-page-node-id="tnEAy8SKBcrd53tcfoa07J">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" data-page-node-id="tkFKRNd6kVflaKyTyWVd5I"><path d="M6 6l12 12M18 6L6 18" data-page-node-id="awlzUehYLXNGHttYyE59K5"/></svg>
+            </div>
+            <div style="font-size:13px; font-weight:600; opacity:0.9;" id="playerCounter" data-page-node-id="FtC4S1m0jfcTt25Ep6BEZD">— / —</div>
+            <div style="width:36px;" data-page-node-id="hhFa9srlYw5YWEItZ1UGJX"></div>
+          </div>
+          <div class="player-progress" data-page-node-id="4pQcE7Ec2NQ0b7GI6Z8DUJ"><span id="playerProgress" style="width:0%" data-page-node-id="7miCRTTXwZGNiiC1GKYkrs"></span></div>
+          <div class="step-info" data-page-node-id="2jE2S5Bde9D9ByHXEIaUTj">
+            <span id="playerPhase" data-page-node-id="7I22vSh0pk7dpnHrlvhSKP">动作</span>
+            <span id="playerNext" data-page-node-id="oLFXPPG2JZhgEzFIYbb4Eg">下一个: —</span>
+          </div>
+          <div class="player-meta" data-page-node-id="ohikqDBPupkTbAMKoRpgDh">
+            <div class="name" id="playerName" data-page-node-id="VpCG2rlt2IoemZNvPAc6Cs">—</div>
+            <div class="meta" id="playerMeta" data-page-node-id="U5YNfTCPmXcsBrHRM8BRDd">—</div>
+          </div>
+        </div>
+
+        <div class="player-pose" data-page-node-id="bzMkVznPG37Udq8Xc9cvBf">
+          <img id="playerPose" src="" alt="" data-page-node-id="852yC0FqXuDNbiQgDAWYZL">
+        </div>
+
+        <div class="player-controls" data-page-node-id="Nl1AlpP4IJQhd17w22qPGk">
+          <div class="timer-circle" data-page-node-id="EhrIDxbS5oL2uorkJyGsw7">
+            <svg width="200" height="200" viewBox="0 0 200 200" data-page-node-id="rAKBSTuiFEvtEv8ncsBOMB">
+              <circle class="bg" cx="100" cy="100" r="92" data-page-node-id="MijsWaZ7Ez7D0hcNeFRVVY" />
+              <circle class="fg" id="timerRing" cx="100" cy="100" r="92"
+                stroke-dasharray="578" stroke-dashoffset="0" data-page-node-id="7Z9dQFynRENCjvt1bXPS77" />
+            </svg>
+            <div class="timer-text" id="timerText" data-page-node-id="erMufk43H4C6EkEvsPj6qn">00</div>
+            <div class="timer-label" id="timerLabel" data-page-node-id="PtqOPAx3JSoDXUrMgUlZZo">秒</div>
+          </div>
+
+          <div class="player-buttons" data-page-node-id="EuEFlAqNT7Xl8YAyiGx41c">
+            <div class="ctrl-btn hot" id="playerPrev" data-page-node-id="SRD1pTc9qXh4fjsI2jFBfB">
+              <svg viewBox="0 0 24 24" fill="currentColor" data-page-node-id="FZLY8hvTUcMQO8PtYArDnp"><path d="M6 6h2v12H6V6zm3.5 6l8.5 6V6l-8.5 6z" data-page-node-id="ZnWvdtGjkTdFcc0FFYKtEB"/></svg>
+            </div>
+            <div class="ctrl-btn primary hot" id="playerToggle" data-page-node-id="zaTGMnH6pKhYVhT2hfgCN1">
+              <svg viewBox="0 0 24 24" fill="currentColor" id="playIcon" data-page-node-id="HMxC6bg9tWOpFbf7oeNKEb"><path d="M8 5v14l11-7z" data-page-node-id="j1bymHjE0iqvl4n7WodbBR"/></svg>
+            </div>
+            <div class="ctrl-btn hot" id="playerNext" data-page-node-id="tPEZVlZYiDf5fIbmNUJ555">
+              <svg viewBox="0 0 24 24" fill="currentColor" data-page-node-id="cBi1qaMLmUYdmU1OwOX9jn"><path d="M16 6h2v12h-2V6zM6 18l8.5-6L6 6v12z" data-page-node-id="E5VK95T89u2mCB07G0EjdI"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 完成动画 -->
+        <div class="complete-overlay" id="completeOverlay" data-page-node-id="CenDmrN1FltBGZAE7ScY4H">
+          <div class="complete-card" data-page-node-id="lPxulU2hT8WAGaMHdLTRoi">
+            <div class="complete-icon pulse-soft" data-page-node-id="1uBI89ZujZNjFIryAtOGtM">✓</div>
+            <div class="complete-title" data-page-node-id="H8HC2iqcchTBzexE0qzvoG">训练完成！</div>
+            <div class="complete-sub" id="completeSub" data-page-node-id="yWwFA19KQO8LbVpkYY71bb">—</div>
+            <div class="complete-stats" data-page-node-id="g9holrdqQmK6eMafXhG9R6">
+              <div class="item" data-page-node-id="GjFQt0qnrx8wCuRoddnCRq"><div class="v" id="completeDuration" data-page-node-id="sxBqTXgybDax11igPoebkU">—</div><div class="l" data-page-node-id="MtZtGU8HxzdRx3g8zkuXpu">总时长</div></div>
+              <div class="item" data-page-node-id="VoHmZD2p4RMnGxcZpSv4Lb"><div class="v" id="completeKcal" data-page-node-id="dmFxKotiTQJtUY119nu9G5">—</div><div class="l" data-page-node-id="vhMgvVftOi58kE129STVrr">千卡</div></div>
+              <div class="item" data-page-node-id="u8zmipaKS42nSYO0cF7gf3"><div class="v" id="completeCount" data-page-node-id="QFl2lkcBiWYfaPJsOGjPTT">—</div><div class="l" data-page-node-id="f3fi3JmIqpRKyxEzasZ1Hv">完成动作</div></div>
+            </div>
+            <div class="complete-actions" data-page-node-id="xp4dAEgb24EZsbVUiihHEK">
+              <button class="complete-btn primary hot" id="completeClose" data-page-node-id="jvSEOyn8T1AgjDST0Ubihm">查看记录</button>
+              <button class="complete-btn ghost hot" id="completeAgain" data-page-node-id="4qBt63Ly7WeinqFFpXCgf5">再来一次</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============== ADD CUSTOM MODAL ============== -->
+      <div class="modal-overlay" id="addModal" data-page-node-id="tgBhmhr5nFcmrjOUijymdy">
+        <div class="modal-sheet" data-page-node-id="5RbwhtF8iOC1uCKZXrLByf">
+          <div class="modal-handle" data-page-node-id="pE9gykQf8ad2mFlDjIWDVG"></div>
+          <div class="modal-header" data-page-node-id="tIecUHLMIsCO7lRoUWbuCr">
+            <h3 data-page-node-id="XheAFrTVgQcixtsl8HtaYO">添加动作</h3>
+            <button class="close hot" id="addModalClose" data-page-node-id="SogJLwFwKYLgmOcuzeImg4">✕</button>
+          </div>
+          <div style="padding: 0 22px 12px;" data-page-node-id="PzCUISizbaT6OYA1SWEkHa">
+            <input type="text" id="addModalSearch" placeholder="搜索动作"
+              style="width:100%; padding:10px 14px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,0.85); font-size:14px; outline:none;" data-page-node-id="pm8FWHVu4RZJCoNXNe6aHv">
+          </div>
+          <div class="modal-body" id="addModalList" data-page-node-id="qq2xGWWTOcnn7jF4nAHYhr"></div>
+        </div>
+      </div>
+
+      <!-- ============== FAVORITES MODAL ============== -->
+      <div class="modal-overlay" id="favModal" data-page-node-id="kcIylJ9ID8KCo2Ln0wXD1o">
+        <div class="modal-sheet" data-page-node-id="bZcpQTUmywBP7QACHPwXOy">
+          <div class="modal-handle" data-page-node-id="7NJkicNy45xJopX2cZHIi3"></div>
+          <div class="modal-header" data-page-node-id="yIh1qeCM2btZpsKgfwtYoy">
+            <h3 data-page-node-id="NHfL56rlHd7pUggDE31U5a">收藏的动作</h3>
+            <button class="close hot" id="favModalClose" data-page-node-id="OoV3Mq3dfTErHaf7XGM7ZW">✕</button>
+          </div>
+          <div class="modal-body" id="favModalList" data-page-node-id="oeUzOG3hXssxxhbD2I1RdY"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* =====================================================
+   应用主脚本 — 潮汐训练 v1
+   ===================================================== */
+
+const ASSET_BASE = 'https://cdn.jsdelivr.net/npm/@bryllim/workout-guide@1.0.0';
+const MANIFEST_URL = './assets/manifest.json';
+
+const APP = {
+  data: { exercises: [] },
+  state: {
+    screen: 'home',
+    detail: null,
+    custom: { items: [], rest: 30, name: '' },
+    filters: { muscle: 'all', equip: 'all', type: 'all', q: '' },
+    homeCat: 'all',
+    schedule: { year: 2026, month: 8 /* 0-indexed Sep */, selected: 5, planned: {} },
+    player: { active: false, items: [], idx: 0, phase: 'work', remaining: 0, timer: null, paused: true, startedAt: null }
+  }
+};
+
+/* ---------- i18n 映射 ---------- */
+const ZH = {
+  muscle: {
+    'Chest': '胸', 'Back': '背', 'Legs': '腿', 'Core': '核心', 'Shoulders': '肩',
+    'Biceps': '二头', 'Triceps': '三头', 'Lats': '背阔', 'Hamstrings': '腘绳',
+    'Quads': '股四头', 'Glutes': '臀', 'Calves': '小腿', 'Forearms': '前臂',
+    'Rear Delts': '后肩', 'Upper Back': '上背', 'Posterior Chain': '后链',
+    'Lower Back': '下背', 'Adductors': '内收肌', 'Hips': '髋', 'Mobility': '灵活性'
+  },
+  secondary: {
+    'Chest': '胸', 'Core': '核心', 'Triceps': '三头', 'Shoulders': '肩',
+    'Lats': '背阔', 'Biceps': '二头', 'Hamstrings': '腘绳', 'Quads': '股四头',
+    'Glutes': '臀', 'Calves': '小腿', 'Forearms': '前臂', 'Rear Delts': '后肩',
+    'Upper Back': '上背', 'Posterior Chain': '后链', 'Lower Back': '下背',
+    'Adductors': '内收肌', 'Hips': '髋', 'Mobility': '灵活性', 'Back': '背',
+    'Grip': '握力', 'Groin': '腹股沟', 'Legs': '腿', 'Cardio': '心肺'
+  },
+  equipment: {
+    'Bodyweight': '自重', 'Dumbbell': '哑铃', 'Barbell': '杠铃', 'Machine': '器械',
+    'Cable': '钢索', 'Cardio': '有氧', 'Kettlebell': '壶铃', 'Plate': '杠铃片',
+    'Pull-up Bar': '单杠', 'Bench': '训练凳', 'Wall': '墙壁', 'Chair': '椅子',
+    'Doorway': '门框', 'Towel': '毛巾', 'Box': '跳箱', 'Stability Ball': '瑜伽球',
+    'Resistance Band': '弹力带'
+  },
+  exerciseType: {
+    'weight_reps': '力量训练', 'bodyweight_reps': '徒手训练',
+    'assisted_bodyweight': '辅助训练', 'duration': '计时训练',
+    'distance_duration': '距离时长'
+  }
+};
+
+function localizeMuscle(m) { return ZH.muscle[m] || m; }
+function localizeEquip(e) { return ZH.equipment[e] || e; }
+function localizeType(t) { return ZH.exerciseType[t] || t; }
+
+/* ---------- 难度自动判定 ---------- */
+function difficultyOf(ex) {
+  // 基于装备 + 部位的经验规则
+  if (ex.equipment === 'Bodyweight' && (ex.primaryMuscle === 'Core' || ex.primaryMuscle === 'Mobility')) return 'beginner';
+  if (ex.exerciseType === 'duration') return 'beginner';
+  if (ex.equipment === 'Barbell' || ex.equipment === 'Cable' || ex.equipment === 'Machine') return 'intermediate';
+  if (/press|squat|deadlift|row|pull-up/i.test(ex.slug)) return 'advanced';
+  return 'intermediate';
+}
+
+function diffLabel(d) { return { beginner: '入门', intermediate: '中等', advanced: '进阶' }[d]; }
+function diffClass(d) { return { beginner: 'beginner', intermediate: 'intermediate', advanced: 'advanced' }[d]; }
+
+/* ---------- 训练强度估算 ---------- */
+function estimateKcal(ex) {
+  // 大致估算：weight_reps ~ 6 kcal/min, duration ~ 5, others ~ 4
+  const map = { weight_reps: 6, bodyweight_reps: 5, duration: 5, distance_duration: 8, assisted_bodyweight: 4 };
+  return map[ex.exerciseType] || 5;
+}
+
+/* ---------- 动作步骤生成 ---------- */
+function stepsFor(ex) {
+  // 用规则模板生成 3 步
+  const primary = localizeMuscle(ex.primaryMuscle);
+  const equip = localizeEquip(ex.equipment);
+  const isStretch = ex.isStretch;
+  const isHold = ex.exerciseType === 'duration';
+  if (isStretch) {
+    return [
+      { title: '起始姿势：进入拉伸位', desc: '保持背部挺直，沉肩收腹，专注于目标部位' },
+      { title: '保持稳定，控制呼吸', desc: '自然呼吸，不要憋气，保持 30 秒' },
+      { title: '缓慢还原，重复对侧', desc: '保持动作连贯，避免弹震' }
+    ];
+  }
+  if (isHold) {
+    return [
+      { title: '进入支撑位', desc: `调整 ${equip} 位置，使 ${primary} 收紧，脊椎保持中立` },
+      { title: '保持动作，启动计时', desc: '全程收紧核心、不要塌腰或弓背' },
+      { title: '呼吸节奏：均匀 4-4', desc: '保持 4 秒吸气，4 秒呼气，避免憋气' }
+    ];
+  }
+  // 普通力量/徒手
+  return [
+    { title: '准备姿势', desc: `调整 ${equip} 至合适位置，${primary} 预激活，保持身体稳定` },
+    { title: '离心阶段', desc: '缓慢下放或回程，控制 2-3 秒，感受肌肉拉伸' },
+    { title: '向心阶段', desc: '发力推起或收缩，顶峰停顿 1 秒后重复' }
+  ];
+}
+
+function tipFor(ex) {
+  const primary = localizeMuscle(ex.primaryMuscle);
+  return `全程保持 ${primary} 主导发力，避免借力代偿；动作节奏 2-1-2（离心-停顿-向心）。`;
+}
+
+/* ---------- CDN 资源 URL ---------- */
+function assetUrl(slug, frameIdx) {
+  return `${ASSET_BASE}/assets/${slug}/frame-${frameIdx}.png`;
+}
+
+/* ---------- 存储层 ---------- */
+const Storage = {
+  KEY: 'tidal_app_v1',
+  get() {
+    try {
+      const raw = localStorage.getItem(this.KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) { return null; }
+  },
+  set(data) {
+    try { localStorage.setItem(this.KEY, JSON.stringify(data)); }
+    catch (e) { console.warn('storage failed', e); }
+  },
+  load() {
+    const saved = this.get() || {};
+    return {
+      favorites: saved.favorites || [],
+      records: saved.records || [],   // {date, duration, kcal, items: []}
+      routines: saved.routines || [],   // {id, name, items:[{slug, sets, reps, rest}], rest}
+      schedule: saved.schedule || {}, // {dateKey: routineId}
+      stats: saved.stats || { days: 0, minutes: 0, kcal: 0 }
+    };
+  },
+  save(state) { this.set(state); }
+};
+
+let DB = Storage.load();
+
+/* ---------- 工具 ---------- */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+function toast(msg, icon = '✓') {
+  const t = $('#toast');
+  t.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4 10-10"/></svg> ${msg}`;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+function fmtDate(d) {
+  const months = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  return `${d.getFullYear()}年${months[d.getMonth()]}`;
+}
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function getExercise(slug) {
+  return APP.data.exercises.find(e => e.slug === slug);
+}
+function getTodayKey() {
+  return dateKey(new Date());
+}
+
+/* ---------- 屏幕切换 ---------- */
+function showScreen(name) {
+  APP.state.screen = name;
+  $$('.screen').forEach(s => s.classList.remove('active'));
+  const target = $('#screen-' + name);
+  if (target) target.classList.add('active');
+  // 重新渲染（部分屏幕需动态数据）
+  if (name === 'home') renderHome();
+  if (name === 'search') renderSearch();
+  if (name === 'records') renderRecords();
+  if (name === 'schedule') renderSchedule();
+  if (name === 'profile') renderProfile();
+  // tab 高亮
+  $$('.navitem').forEach(n => n.classList.toggle('active', n.dataset.target === name));
+}
+
+/* ---------- 列表项（通用） ---------- */
+function itemHTML(ex, opts = {}) {
+  const fav = DB.favorites.includes(ex.slug);
+  return `
+    <div class="list-item hot" data-slug="${ex.slug}" data-go="detail">
+      <div class="thumb">
+        <img src="${assetUrl(ex.slug, 1)}" loading="lazy" alt="${ex.name}">
+      </div>
+      <div class="item-info">
+        <div class="item-title">
+          ${ex.nameZh || ex.name}
+          <span class="tag-pill ${opts.tagClass || 'muted'}">${localizeEquip(ex.equipment)}</span>
+        </div>
+        <div class="item-meta">
+          <span>${localizeMuscle(ex.primaryMuscle)}</span>
+          <span>·</span>
+          <span class="diff-badge ${diffClass(difficultyOf(ex))}">${diffLabel(difficultyOf(ex))}</span>
+          ${ex.secondaryMuscles && ex.secondaryMuscles.length ? `<span>· ${ex.secondaryMuscles.slice(0,2).map(localizeMuscle).join('/')}</span>` : ''}
+        </div>
+      </div>
+      ${opts.fav !== false ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="${fav ? '#FF8AA8' : 'none'}" stroke="${fav ? '#FF8AA8' : '#8AA1BF'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-fav="${ex.slug}"><path d="M12 20s-7-4.5-7-9a4 4 0 017-2.5A4 4 0 0119 11c0 4.5-7 9-7 9z"/></svg>` : ''}
+    </div>`;
+}
+
+/* ---------- HOME 渲染 ---------- */
+function renderHome() {
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 6) return '夜深了';
+    if (h < 12) return '早安';
+    if (h < 18) return '下午好';
+    return '晚上好';
+  })();
+  $('#homeSub').textContent = `${greeting}，今天想练点什么？`;
+
+  // 今日推荐 = 从 popular + 一点自重动作
+  const popular = APP.data.exercises.filter(e =>
+    ['push-up', 'dumbbell-bench-press', 'plank', 'bench-press', 'incline-dumbbell-press',
+     'squat', 'deadlift', 'pull-up', 'dumbbell-fly', 'crunch', 'russian-twist', 'mountain-climber',
+     'lunge', 'overhead-press', 'bicep-curl', 'dip'].includes(e.slug)
+  ).slice(0, 12);
+
+  const popularList = $('#popularList');
+  popularList.innerHTML = popular.slice(0, 4).map(ex => itemHTML(ex, { tagClass: 'teal' })).join('');
+
+  // 推荐（基于浏览历史——用随机 + 不同部位）
+  const allByMuscle = {};
+  APP.data.exercises.forEach(e => {
+    if (!allByMuscle[e.primaryMuscle]) allByMuscle[e.primaryMuscle] = [];
+    allByMuscle[e.primaryMuscle].push(e);
+  });
+  const mixed = [];
+  ['Biceps', 'Quads', 'Lats', 'Shoulders'].forEach(m => {
+    if (allByMuscle[m]) mixed.push(allByMuscle[m][Math.floor(Math.random() * Math.min(3, allByMuscle[m].length))]);
+  });
+  const recommendList = $('#recommendList');
+  recommendList.innerHTML = mixed.filter(Boolean).map(ex => itemHTML(ex, { tagClass: '' })).join('');
+
+  // chip 切换
+  $$('#homeChips .chip').forEach(chip => {
+    chip.onclick = () => {
+      $$('#homeChips .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      APP.state.homeCat = chip.dataset.cat;
+      showScreen('search');
+    };
+  });
+
+  // 今日推荐 hero
+  const todayMap = {
+    all: { title: '全身燃脂训练', items: ['push-up','squat','plank','crunch','lunge','mountain-climber','burpee','jumping-jack'], time: '25 min', kcal: 360 },
+    Chest: { title: '胸部强化训练', items: ['bench-press','incline-dumbbell-press','dumbbell-fly','push-up','dumbbell-bench-press','cable-fly','dip','pec-deck'], time: '32 min', kcal: 280 },
+    Back: { title: '背部雕刻训练', items: ['pull-up','barbell-row','lat-pulldown','seated-row','t-bar-row','face-pull','deadlift','shrug'], time: '30 min', kcal: 260 },
+    Legs: { title: '下肢力量训练', items: ['squat','walking-lunge','leg-press','romanian-deadlift','leg-extension','leg-curl','calf-raise','bulgarian-split-squat'], time: '35 min', kcal: 320 },
+    Core: { title: '核心稳定训练', items: ['plank','side-plank','crunch','russian-twist','mountain-climber','bicycle-crunch','hanging-leg-raise','cable-crunch'], time: '20 min', kcal: 200 },
+    Shoulders: { title: '肩部塑形训练', items: ['overhead-press','lateral-raise','front-raise','face-pull','rear-delt-fly','arnold-press','upright-row','shrug'], time: '28 min', kcal: 240 },
+    Biceps: { title: '手臂塑形训练', items: ['bicep-curl','hammer-curl','preacher-curl','concentration-curl','cable-curl','dip','tricep-pushdown','close-grip-bench-press'], time: '26 min', kcal: 220 }
+  };
+  const today = todayMap[APP.state.homeCat] || todayMap.all;
+  $('#todayTitle').textContent = today.title;
+  $('#todayTag').textContent = today.time;
+  $('#todayStat').textContent = `${today.items.length} 个动作 · 强度中等 · 约 ${today.kcal} kcal`;
+  $('#todayStart').onclick = () => startRoutine(today.items.map(getExercise).filter(Boolean), today.title);
+
+  // 同步头像 -> 我的
+  $$('.avatar').forEach(a => a.onclick = () => showScreen('profile'));
+}
+
+/* ---------- SEARCH 渲染 ---------- */
+function renderSearch() {
+  // 渲染肌肉 chips
+  const muscleChips = $('#muscleChips');
+  const muscles = ['all', ...new Set(APP.data.exercises.map(e => e.primaryMuscle))];
+  // 按典型肌群顺序显示
+  const order = ['all','Chest','Back','Lats','Shoulders','Biceps','Triceps','Core','Legs','Quads','Hamstrings','Glutes','Calves'];
+  muscleChips.innerHTML = order.filter(m => muscles.includes(m)).map(m =>
+    `<div class="chip ${m === 'all' ? 'active' : ''}" data-muscle="${m}">${m === 'all' ? '全部' : localizeMuscle(m)}</div>`
+  ).join('');
+
+  // 绑定点击
+  $$('#muscleChips .chip').forEach(c => {
+    c.onclick = () => {
+      $$('#muscleChips .chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      APP.state.filters.muscle = c.dataset.muscle;
+      renderSearchList();
+    };
+  });
+  $$('#equipSeg div').forEach(c => {
+    c.onclick = () => {
+      $$('#equipSeg div').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      APP.state.filters.equip = c.dataset.equip;
+      renderSearchList();
+    };
+  });
+  $$('#typeSeg div').forEach(c => {
+    c.onclick = () => {
+      $$('#typeSeg div').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      APP.state.filters.type = c.dataset.type;
+      renderSearchList();
+    };
+  });
+
+  // 搜索框
+  const input = $('#searchInput');
+  input.oninput = () => {
+    APP.state.filters.q = input.value;
+    $('#searchClear').style.display = input.value ? 'block' : 'none';
+    renderSearchList();
+  };
+  $('#searchClear').onclick = () => { input.value = ''; APP.state.filters.q = ''; $('#searchClear').style.display = 'none'; renderSearchList(); };
+
+  renderSearchList();
+}
+
+function renderSearchList() {
+  const { muscle, equip, type, q } = APP.state.filters;
+  let list = APP.data.exercises.slice();
+
+  if (muscle !== 'all') list = list.filter(e => e.primaryMuscle === muscle);
+  if (equip !== 'all') list = list.filter(e => e.equipment === equip);
+  if (type !== 'all') list = list.filter(e => e.exerciseType === type);
+  if (q) {
+    const Q = q.toLowerCase();
+    list = list.filter(e =>
+      e.name.toLowerCase().includes(Q) ||
+      e.slug.includes(Q) ||
+      e.primaryMuscle.toLowerCase().includes(Q) ||
+      e.equipment.toLowerCase().includes(Q) ||
+      (e.secondaryMuscles || []).some(m => m.toLowerCase().includes(Q))
+    );
+  }
+
+  $('#searchCount').textContent = `共 ${list.length} 个动作`;
+
+  const listEl = $('#searchList');
+  if (!list.length) {
+    listEl.innerHTML = `<div class="empty"><div class="big-icon">~</div><div>没有匹配的动作</div><div style="font-size:12px; margin-top:4px;">试试更换筛选条件</div></div>`;
+    return;
+  }
+  // 默认按「热门」（popular slug 优先）
+  const popularSlugs = new Set(['push-up','bench-press','squat','deadlift','pull-up','plank','dumbbell-bench-press','overhead-press','lunge','bicep-curl','crunch','mountain-climber','barbell-row','incline-dumbbell-press','dumbbell-fly']);
+  list.sort((a, b) => {
+    const pa = popularSlugs.has(a.slug) ? 1 : 0;
+    const pb = popularSlugs.has(b.slug) ? 1 : 0;
+    if (pa !== pb) return pb - pa;
+    return a.name.localeCompare(b.name);
+  });
+  listEl.innerHTML = list.slice(0, 80).map(ex => itemHTML(ex)).join('');
+}
+
+/* ---------- DETAIL 渲染 ---------- */
+function showDetail(slug) {
+  const ex = getExercise(slug);
+  if (!ex) return;
+  APP.state.detail = ex;
+  const fav = DB.favorites.includes(slug);
+
+  $('#detailName').textContent = ex.nameZh || ex.name;
+  $('#detailEn').textContent = ex.name;
+  const d = difficultyOf(ex);
+  $('#detailTags').innerHTML = `
+    <span class="tag">${localizeEquip(ex.equipment)}</span>
+    <span class="tag">${diffLabel(d)}</span>
+    <span class="tag">${localizeMuscle(ex.primaryMuscle)}</span>
+  `;
+  $('#detailDesc').textContent = `主要锻炼 ${localizeMuscle(ex.primaryMuscle)}${ex.secondaryMuscles.length ? ' · 协同 ' + ex.secondaryMuscles.slice(0,2).map(localizeMuscle).join('、') : ''}`;
+
+  // 智能推断训练量
+  let sets = ex.exerciseType === 'duration' ? 3 : 4;
+  let reps = ex.exerciseType === 'duration' ? '45s' : '10-12';
+  let rest = ex.exerciseType === 'duration' ? 20 : 60;
+  if (ex.equipment === 'Barbell') { reps = '8-12'; rest = 90; }
+  if (ex.equipment === 'Dumbbell') { reps = '10-15'; rest = 60; }
+  if (ex.equipment === 'Cable') { reps = '12-15'; rest = 60; }
+  if (ex.exerciseType === 'bodyweight_reps') { reps = '12-20'; }
+  if (ex.isStretch) { sets = 2; reps = '30s'; rest = 15; }
+  $('#detailSets').textContent = sets;
+  $('#detailReps').textContent = reps;
+  $('#detailRepsLabel').textContent = ex.exerciseType === 'duration' ? '秒 / 组' : '次 / 组';
+  $('#detailRest').textContent = rest;
+
+  // 演示图
+  $('#demoMain').src = assetUrl(slug, 1);
+  const stepsEl = $('#demoSteps');
+  stepsEl.innerHTML = [1,2,3].map(i =>
+    `<div class="demo-step ${i === 1 ? 'active' : ''}" data-i="${i}">
+      <img src="${assetUrl(slug, i)}" loading="lazy" alt="帧${i}">
+      <span>${['起始','过程','结束'][i-1]}</span>
+    </div>`
+  ).join('');
+  stepsEl.querySelectorAll('.demo-step').forEach(s => {
+    s.onclick = () => {
+      stepsEl.querySelectorAll('.demo-step').forEach(x => x.classList.remove('active'));
+      s.classList.add('active');
+      $('#demoMain').src = assetUrl(slug, +s.dataset.i);
+    };
+  });
+
+  // 演示播放
+  $('#demoPlay').onclick = () => {
+    if (demoPlaying) {
+      stopDemo();
+    } else {
+      startDemo(slug);
+    }
+  };
+
+  // 肌肉
+  $('#detailMuscle').innerHTML = `主要：${localizeMuscle(ex.primaryMuscle)}${ex.secondaryMuscles.length ? '<br>辅助：' + ex.secondaryMuscles.map(localizeMuscle).join('、') : ''}`;
+
+  // 步骤
+  $('#detailSteps').innerHTML = stepsFor(ex).map((s, i) => `
+    <div class="step">
+      <div class="step-num">${i+1}</div>
+      <div>
+        <div class="step-title">${s.title}</div>
+        <div class="step-desc">${s.desc}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // 提示
+  $('#detailTip').textContent = tipFor(ex);
+
+  // 收藏
+  const favBtn = $('#favBtn');
+  favBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="${fav ? '#FF8AA8' : 'none'}" stroke="${fav ? '#FF8AA8' : '#8AA1BF'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-7-9a4 4 0 017-2.5A4 4 0 0119 11c0 4.5-7 9-7 9z"/></svg>`;
+  favBtn.onclick = () => toggleFavorite(slug);
+
+  // 加入自定义 / 立即开始
+  $('#detailAddCustom').onclick = () => {
+    APP.state.custom.items.push({ slug, sets, reps, rest });
+    toast('已加入自定义训练');
+  };
+  $('#detailStartTrain').onclick = () => {
+    startRoutine([ex], ex.nameZh || ex.name);
+  };
+
+  showScreen('detail');
+}
+
+let demoPlaying = false, demoTimer = null;
+function startDemo(slug) {
+  demoPlaying = true;
+  $('#demoPlay').innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>`;
+  let i = 1;
+  demoTimer = setInterval(() => {
+    i = i % 3 + 1;
+    $('#demoMain').src = assetUrl(slug, i);
+    $$('#demoSteps .demo-step').forEach((s, k) => s.classList.toggle('active', k+1 === i));
+  }, 900);
+}
+function stopDemo() {
+  demoPlaying = false;
+  $('#demoPlay').innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+  if (demoTimer) { clearTimeout(demoTimer); demoTimer = null; }
+}
+
+function toggleFavorite(slug) {
+  const i = DB.favorites.indexOf(slug);
+  if (i >= 0) {
+    DB.favorites.splice(i, 1);
+    toast('已取消收藏');
+  } else {
+    DB.favorites.push(slug);
+    toast('已收藏 ⭐');
+  }
+  Storage.save(DB);
+  showDetail(slug); // 刷新收藏按钮
+}
+
+/* ---------- CUSTOM 渲染 ---------- */
+function renderCustom() {
+  const items = APP.state.custom.items;
+  $('#customCount').textContent = items.length;
+  // 总时长估算
+  const totalSec = items.reduce((sum, it) => {
+    const ex = getExercise(it.slug);
+    if (!ex) return sum;
+    const secs = ex.exerciseType === 'duration' ? parseInt(String(it.reps)) || 30 : 40;
+    return sum + secs * it.sets + (items.length - 1) * APP.state.custom.rest;
+  }, 0);
+  $('#customDuration').textContent = '~' + Math.max(1, Math.round(totalSec / 60));
+  $('#customRest').textContent = APP.state.custom.rest;
+  $('#customName').value = APP.state.custom.name || '';
+
+  // 自动命名
+  if (!APP.state.custom.name) {
+    const muscles = [...new Set(items.map(it => getExercise(it.slug)).filter(Boolean).map(ex => localizeMuscle(ex.primaryMuscle)))];
+    $('#customOverviewName').textContent = muscles.length ? muscles.slice(0, 3).join(' + ') + ' 混合' : '我的训练组合';
+  } else {
+    $('#customOverviewName').textContent = APP.state.custom.name;
+  }
+
+  // 列表
+  const listEl = $('#customList');
+  if (!items.length) {
+    listEl.innerHTML = `<div class="empty"><div class="big-icon">＋</div><div>还没有动作</div><div style="font-size:12px; margin-top:4px;">点击下方添加动作按钮</div></div>`;
+  } else {
+    listEl.innerHTML = items.map((it, i) => {
+      const ex = getExercise(it.slug);
+      if (!ex) return '';
+      const secs = ex.exerciseType === 'duration' ? parseInt(String(it.reps)) || 30 : 40;
+      return `
+        <div>
+          <div class="list-item">
+            <div class="drag"><svg width="14" height="18" viewBox="0 0 24 24" fill="#8AA1BF"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></div>
+            <div style="width:30px; height:30px; border-radius:50%; background:var(--primary-grad); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px;">${i+1}</div>
+            <div class="thumb" style="width:42px; height:42px;"><img src="${assetUrl(it.slug, 1)}" alt=""></div>
+            <div class="item-info">
+              <div class="item-title">${ex.nameZh || ex.name}</div>
+              <div class="item-meta">
+                <select data-sets="${i}" style="background:rgba(15,50,95,0.05); border:none; padding:2px 6px; border-radius:6px; font-size:12px; font-weight:600;">
+                  ${[1,2,3,4,5].map(n => `<option ${it.sets === n ? 'selected' : ''}>${n}</option>`).join('')} 组
+                </select>
+                <span>×</span>
+                <input data-reps="${i}" value="${it.reps}" style="width:48px; background:rgba(15,50,95,0.05); border:none; padding:2px 6px; border-radius:6px; font-size:12px; font-weight:600;">
+              </div>
+            </div>
+            <div class="item-dur">
+              <div class="t">${formatSec(secs * it.sets)}</div>
+              <div class="l">时长</div>
+            </div>
+            <div class="hot" data-remove="${i}" style="padding:6px; margin-left:4px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8AA1BF" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+    // 绑定编辑
+    listEl.querySelectorAll('[data-sets]').forEach(s => {
+      s.onchange = () => {
+        APP.state.custom.items[+s.dataset.sets].sets = +s.value;
+        renderCustom();
+      };
+    });
+    listEl.querySelectorAll('[data-reps]').forEach(s => {
+      s.onchange = () => { APP.state.custom.items[+s.dataset.reps].reps = s.value; renderCustom(); };
+    });
+    listEl.querySelectorAll('[data-remove]').forEach(s => {
+      s.onclick = () => { APP.state.custom.items.splice(+s.dataset.remove, 1); renderCustom(); };
+    });
+  }
+
+  // tick 绑定
+  $$('#tickBar .tick').forEach(t => {
+    t.classList.toggle('active', +t.dataset.value === APP.state.custom.rest);
+    t.onclick = () => {
+      APP.state.custom.rest = +t.dataset.value;
+      renderCustom();
+    };
+  });
+
+  // 名称输入
+  $('#customName').oninput = (e) => {
+    APP.state.custom.name = e.target.value;
+    $('#customOverviewName').textContent = APP.state.custom.name || '我的训练组合';
+  };
+
+  // 添加按钮
+  $('#addCustomBtn').onclick = openAddModal;
+  $('#customSave').onclick = saveRoutine;
+  $('#customStart').onclick = startCustom;
+}
+
+function formatSec(s) {
+  const m = Math.floor(s / 60), sec = s % 60;
+  return m > 0 ? `${m}:${String(sec).padStart(2,'0')}` : `${sec}`;
+}
+
+function saveRoutine() {
+  if (!APP.state.custom.items.length) return toast('请先添加动作');
+  const id = 'r_' + Date.now();
+  const name = APP.state.custom.name || $('#customOverviewName').textContent;
+  DB.routines.push({
+    id, name,
+    items: APP.state.custom.items.map(it => ({ ...it })),
+    rest: APP.state.custom.rest,
+    created: Date.now()
+  });
+  Storage.save(DB);
+  toast('已保存到「我的训练组合」');
+}
+
+function startCustom() {
+  if (!APP.state.custom.items.length) return toast('请先添加动作');
+  const items = APP.state.custom.items.map(it => getExercise(it.slug)).filter(Boolean);
+  startRoutine(items, APP.state.custom.name || $('#customOverviewName').textContent);
+}
+
+/* ---------- ADD MODAL ---------- */
+function openAddModal() {
+  const overlay = $('#addModal');
+  overlay.classList.add('active');
+  const render = (q = '') => {
+    let list = APP.data.exercises;
+    if (q) {
+      const Q = q.toLowerCase();
+      list = list.filter(e => e.name.toLowerCase().includes(Q) || e.primaryMuscle.toLowerCase().includes(Q));
+    }
+    list = list.slice(0, 60);
+    $('#addModalList').innerHTML = list.map(ex => {
+      const ex_ = ex;
+      const added = APP.state.custom.items.some(it => it.slug === ex_.slug);
+      return `
+        <div class="list-item hot" data-add="${ex_.slug}">
+          <div class="thumb" style="width:42px; height:42px;"><img src="${assetUrl(ex_.slug, 1)}" alt=""></div>
+          <div class="item-info">
+            <div class="item-title">${ex_.name}</div>
+            <div class="item-meta"><span>${localizeEquip(ex_.equipment)}</span><span>·</span><span>${localizeMuscle(ex_.primaryMuscle)}</span></div>
+          </div>
+          ${added ? '<span class="tag-pill teal">已添加</span>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3D6FE6" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'}
+        </div>`;
+    }).join('');
+    $$('#addModalList [data-add]').forEach(el => {
+      el.onclick = () => {
+        const slug = el.dataset.add;
+        const ex = getExercise(slug);
+        if (!ex) return;
+        if (APP.state.custom.items.some(it => it.slug === slug)) {
+          APP.state.custom.items = APP.state.custom.items.filter(it => it.slug !== slug);
+          toast('已移除');
+        } else {
+          APP.state.custom.items.push({
+            slug,
+            sets: ex.exerciseType === 'duration' ? 3 : 4,
+            reps: ex.exerciseType === 'duration' ? '45' : '12',
+            rest: ex.equipment === 'Barbell' ? 90 : 60
+          });
+          toast('已添加');
+        }
+        render($('#addModalSearch').value);
+        renderCustom();
+      };
+    });
+  };
+  $('#addModalSearch').value = '';
+  $('#addModalSearch').oninput = (e) => render(e.target.value);
+  render();
+}
+function closeAddModal() { $('#addModal').classList.remove('active'); }
+$('#addModalClose').onclick = closeAddModal;
+$('#addModal').addEventListener('click', (e) => { if (e.target.id === 'addModal') closeAddModal(); });
+
+/* ---------- RECORDS 渲染 ---------- */
+function renderRecords() {
+  const now = new Date();
+  const month = now.getMonth(), year = now.getFullYear();
+  const monthRecords = DB.records.filter(r => {
+    const d = new Date(r.date);
+    return d.getFullYear() === year && d.getMonth() === month;
+  });
+
+  const totalMin = monthRecords.reduce((s, r) => s + r.duration, 0);
+  const totalKcal = monthRecords.reduce((s, r) => s + r.kcal, 0);
+  const h = Math.floor(totalMin / 60), m = totalMin % 60;
+  $('#monthTotal').textContent = totalMin ? `${h}h ${m}m` : '0h 0m';
+  $('#monthKcal').textContent = totalKcal ? totalKcal.toLocaleString() : '0';
+  $('#monthCount').textContent = monthRecords.length;
+
+  // 连续天数
+  const dates = new Set(DB.records.map(r => r.date));
+  let streak = 0;
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    if (dates.has(dateKey(d))) streak++;
+    else if (i > 0) break;
+  }
+  $('#streakDays').textContent = streak;
+
+  // 较上月
+  const lastMonthRecords = DB.records.filter(r => {
+    const d = new Date(r.date);
+    const lm = month === 0 ? 11 : month - 1;
+    const ly = month === 0 ? year - 1 : year;
+    return d.getFullYear() === ly && d.getMonth() === lm;
+  });
+  const lastKcal = lastMonthRecords.reduce((s, r) => s + r.kcal, 0);
+  let trend = '';
+  if (lastKcal > 0) {
+    const change = Math.round((totalKcal - lastKcal) / lastKcal * 100);
+    trend = ` · 较上月 ${change >= 0 ? '+' : ''}${change}%`;
+  }
+  $('#monthSub').textContent = `${monthRecords.length} 次训练 · 连续打卡 ${streak} 天${trend}`;
+
+  // 本周柱状图
+  const today = new Date();
+  const dow = (today.getDay() + 6) % 7; // 周一=0
+  const monday = new Date(today); monday.setDate(today.getDate() - dow);
+  const weekData = [0,0,0,0,0,0,0];
+  DB.records.forEach(r => {
+    const d = new Date(r.date);
+    const diff = Math.floor((d - monday) / (24 * 3600 * 1000));
+    if (diff >= 0 && diff < 7) weekData[diff] += r.duration;
+  });
+  const max = Math.max(...weekData, 1);
+  $('#weekBars').innerHTML = weekData.map((v, i) => {
+    const h = Math.max(8, Math.round(v / max * 96));
+    return `<div class="bar" style="height:${h}px" title="${v} 分钟"></div>`;
+  }).join('');
+
+  // 历史
+  const history = DB.records.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+  const historyEl = $('#historyList');
+  if (!history.length) {
+    historyEl.innerHTML = `<div class="empty"><div class="big-icon">~</div><div>还没有训练记录</div><div style="font-size:12px; margin-top:4px;">完成一次训练就会自动记录</div></div>`;
+  } else {
+    historyEl.innerHTML = history.map(r => `
+      <div class="list-item">
+        <div class="thumb" style="background: linear-gradient(135deg, ${r.color || 'rgba(61,111,230,0.15)'} 0%, rgba(0,194,209,0.15) 100%); display:flex; align-items:center; justify-content:center;">
+          <span style="font-size:24px;">${r.icon || '✓'}</span>
+        </div>
+        <div class="item-info">
+          <div class="item-title">${r.name}</div>
+          <div class="item-meta">${r.dateStr} · ${r.duration} 分钟 · ${r.items.length} 个动作 · ${r.kcal} 千卡</div>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+/* ---------- SCHEDULE 渲染 ---------- */
+function renderSchedule() {
+  const { year, month, selected } = APP.state.schedule;
+  const monthChip = $('#calMonthChip');
+  monthChip.textContent = fmtDate(new Date(year, month)) + ' ▾';
+  const firstDay = new Date(year, month, 1);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const startWeekday = firstDay.getDay();
+  const grid = $('#daysGrid');
+  let html = '';
+  for (let i = 0; i < startWeekday; i++) html += '<div class="day-cell empty"></div>';
+  // 已训练日期
+  const trainedDates = new Set(DB.records.map(r => r.date));
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateKeyStr = dateKey(new Date(year, month, d));
+    const cls = ['day-cell'];
+    if (trainedDates.has(dateKeyStr)) cls.push('training');
+    if (d === selected) cls.push('selected');
+    html += `<div class="${cls.join(' ')}" data-day="${d}">${d}</div>`;
+  }
+  // 补尾
+  const total = startWeekday + daysInMonth;
+  const rem = (7 - total % 7) % 7;
+  for (let i = 0; i < rem; i++) html += '<div class="day-cell empty"></div>';
+  grid.innerHTML = html;
+  grid.querySelectorAll('.day-cell[data-day]').forEach(c => {
+    c.onclick = () => {
+      APP.state.schedule.selected = +c.dataset.day;
+      renderSchedule();
+    };
+  });
+
+  const selDate = new Date(year, month, selected);
+  const selKey = dateKey(selDate);
+  const weeks = ['日','一','二','三','四','五','六'];
+  $('#scheduleDateLabel').innerHTML = `${month + 1}月${selected}日 周${weeks[selDate.getDay()]} · <span class="accent">已安排 ${(DB.schedule[selKey] ? 1 : 0) + trainedDates.has(selKey) ? Math.max(1, (DB.schedule[selKey] ? 1 : 0)) : 0} 项</span>`;
+
+  const listEl = $('#scheduleList');
+  const routineId = DB.schedule[selKey];
+  if (!routineId) {
+    listEl.innerHTML = `<div class="empty"><div class="big-icon">◌</div><div>今天还没有安排训练</div><div style="font-size:12px; margin-top:4px;">点击「安排训练」从已保存的训练组合中选择</div></div>`;
+  } else {
+    const r = DB.routines.find(x => x.id === routineId);
+    if (!r) {
+      listEl.innerHTML = `<div class="empty"><div class="big-icon">!</div><div>训练组合已被删除</div></div>`;
+    } else {
+      listEl.innerHTML = r.items.map((it, i) => {
+        const ex = getExercise(it.slug);
+        if (!ex) return '';
+        return `
+          <div class="list-item">
+            <div style="width:30px; height:30px; border-radius:50%; background:var(--primary-grad); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px;">${i+1}</div>
+            <div class="thumb" style="width:42px; height:42px;"><img src="${assetUrl(it.slug, 1)}" alt=""></div>
+            <div class="item-info">
+              <div class="item-title">${ex.name}</div>
+              <div class="item-meta">${it.sets} 组 × ${it.reps} ${typeof it.reps === 'string' && /^\d+$/.test(it.reps) ? '次' : ''}</div>
+            </div>
+            <div class="item-dur">
+              <div class="t">${formatSec((ex.exerciseType === 'duration' ? parseInt(it.reps) || 30 : 40) * it.sets)}</div>
+              <div class="l">时长</div>
+            </div>
+          </div>`;
+      }).join('') + `<div class="add-btn hot" data-rid="${r.id}" id="scheduleStart" style="background: var(--ink-1); color:#fff; border-color:var(--ink-1);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4l14 8-14 8V4z"/></svg>开始今日训练</div>`;
+      const startBtn = $('#scheduleStart');
+      if (startBtn) startBtn.onclick = () => startRoutine(r.items.map(it => getExercise(it.slug)).filter(Boolean), r.name);
+    }
+  }
+
+  $('#scheduleAdd').onclick = () => openSchedulePicker();
+}
+
+function openSchedulePicker() {
+  if (!DB.routines.length) {
+    toast('请先在「自定义训练」中保存训练组合');
+    return;
+  }
+  const selDate = new Date(APP.state.schedule.year, APP.state.schedule.month, APP.state.schedule.selected);
+  const selKey = dateKey(selDate);
+  // 复用 add modal
+  const overlay = $('#addModal');
+  overlay.classList.add('active');
+  $('.modal-header h3', overlay).textContent = '选择训练组合';
+  $('#addModalSearch').value = '';
+  const render = (q = '') => {
+    let list = DB.routines.slice();
+    if (q) list = list.filter(r => r.name.toLowerCase().includes(q.toLowerCase()));
+    $('#addModalList').innerHTML = list.map(r => `
+      <div class="list-item hot" data-rid="${r.id}">
+        <div class="thumb" style="background:linear-gradient(135deg, rgba(61,111,230,0.2), rgba(0,194,209,0.2));">
+          <span style="font-size:20px;">⚡</span>
+        </div>
+        <div class="item-info">
+          <div class="item-title">${r.name}</div>
+          <div class="item-meta">${r.items.length} 个动作 · 组间 ${r.rest}s</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8AA1BF" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+      </div>`).join('');
+    $$('#addModalList [data-rid]').forEach(el => {
+      el.onclick = () => {
+        DB.schedule[selKey] = el.dataset.rid;
+        Storage.save(DB);
+        toast(`已安排到 ${selKey}`);
+        closeAddModal();
+        renderSchedule();
+      };
+    });
+  };
+  $('#addModalSearch').oninput = (e) => render(e.target.value);
+  render();
+  // 重置 header
+  setTimeout(() => { $('.modal-header h3').textContent = '添加动作'; }, 0);
+}
+
+/* ---------- PROFILE 渲染 ---------- */
+function renderProfile() {
+  $('#profileDays').textContent = DB.stats.days;
+  $('#profileMinutes').textContent = DB.stats.minutes;
+  $('#profileKcal').textContent = DB.stats.kcal.toLocaleString();
+  // 等级
+  const lvl = DB.stats.minutes < 60 ? 'Lv.1 海洋见习守护'
+    : DB.stats.minutes < 300 ? 'Lv.2 海岸巡游者'
+    : DB.stats.minutes < 900 ? 'Lv.3 深潮行者'
+    : DB.stats.minutes < 2000 ? 'Lv.4 海洋之心'
+    : 'Lv.5 守岸人之光';
+  $('#profileLevel').textContent = lvl;
+
+  // 徽章
+  const badges = [
+    { id: 'first', name: '初出茅庐', icon: '🌱', check: () => DB.records.length >= 1 },
+    { id: 'streak3', name: '连续 3 天', icon: '🔥', check: () => calcStreak() >= 3 },
+    { id: 'streak7', name: '连续 7 天', icon: '⚡', check: () => calcStreak() >= 7 },
+    { id: 'fav5', name: '收藏 5 个', icon: '⭐', check: () => DB.favorites.length >= 5 },
+    { id: 'custom', name: '组合大师', icon: '✦', check: () => DB.routines.length >= 1 },
+    { id: 'time60', name: '训练 60 分', icon: '⏱', check: () => DB.stats.minutes >= 60 },
+    { id: 'time300', name: '训练 300 分', icon: '◆', check: () => DB.stats.minutes >= 300 },
+    { id: 'kcal1000', name: '燃脂 1000', icon: '♥', check: () => DB.stats.kcal >= 1000 }
+  ];
+  $('#badgeGrid').innerHTML = badges.map(b => {
+    const ok = b.check();
+    return `<div class="badge ${ok ? '' : 'locked'}" title="${b.name}">
+      <div class="icon">${ok ? b.icon : '?'}</div>
+      <div class="name">${b.name}</div>
+    </div>`;
+  }).join('');
+  const earned = badges.filter(b => b.check()).length;
+  $('#badgeCount').textContent = `${earned} / ${badges.length}`;
+
+  // 训练组合数量
+  $('#myRoutinesCount').textContent = `${DB.routines.length} 套`;
+  $('#favListCount').textContent = `${DB.favorites.length} 个`;
+
+  // 编辑按钮
+  $('#editProfile').onclick = () => toast('个人信息编辑开发中');
+
+  // 收藏弹窗
+  $('#favMenu').onclick = () => openFavModal();
+  // 重置
+  $('#resetBtn').onclick = () => {
+    if (confirm('确定清空所有数据？此操作不可恢复！')) {
+      localStorage.removeItem('tidal_app_v1');
+      DB = Storage.load();
+      renderProfile();
+      toast('已清空所有数据');
+    }
+  };
+}
+
+function calcStreak() {
+  const dates = new Set(DB.records.map(r => r.date));
+  let s = 0;
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    if (dates.has(dateKey(d))) s++;
+    else if (i > 0) break;
+  }
+  return s;
+}
+
+function openFavModal() {
+  if (!DB.favorites.length) { toast('还没有收藏'); return; }
+  $('#favModal').classList.add('active');
+  const list = DB.favorites.map(s => getExercise(s)).filter(Boolean);
+  $('#favModalList').innerHTML = list.map(ex => itemHTML(ex, { fav: false })).join('');
+}
+$('#favModalClose').onclick = () => $('#favModal').classList.remove('active');
+$('#favModal').addEventListener('click', (e) => { if (e.target.id === 'favModal') $('#favModal').classList.remove('active'); });
+
+/* ---------- 播放器 ---------- */
+function startRoutine(items, name) {
+  if (!items.length) { toast('训练列表为空'); return; }
+  APP.state.player = {
+    active: true, items, idx: 0, name, paused: false,
+    startedAt: Date.now(),
+    phase: 'work',
+    remaining: getWorkSec(items[0]),
+    timer: null
+  };
+  $('#player').classList.add('active');
+  renderPlayer();
+  startTimer();
+}
+
+function getWorkSec(ex) {
+  if (!ex) return 30;
+  if (ex.exerciseType === 'duration') return 30;
+  if (ex.isStretch) return 30;
+  return 40;
+}
+
+function renderPlayer() {
+  const p = APP.state.player;
+  if (!p.items.length) return;
+  const ex = p.items[p.idx];
+  $('#playerCounter').textContent = `${p.idx + 1} / ${p.items.length}`;
+  $('#playerProgress').style.width = `${(p.idx / p.items.length) * 100}%`;
+  $('#playerName').textContent = ex.nameZh || ex.name;
+  const phaseLabel = p.phase === 'work' ? '动作' : p.phase === 'rest' ? '休息' : '完成';
+  $('#playerPhase').textContent = phaseLabel;
+  $('#playerPose').src = assetUrl(ex.slug, 1);
+  const next = p.items[p.idx + 1];
+  $('#playerNext').textContent = next ? `下一个: ${next.name}` : '本组最后一个';
+  const meta = p.phase === 'work'
+    ? `${p.items.length} 个动作 · ${ex.equipment}`
+    : `休息 · 准备下一个动作`;
+  $('#playerMeta').textContent = meta;
+  // timer
+  $('#timerText').textContent = formatTime(p.remaining);
+  $('#timerLabel').textContent = p.phase === 'work' ? '动作秒' : '休息秒';
+  const ring = $('#timerRing');
+  const total = p.phase === 'work' ? getWorkSec(ex) : APP.state.custom.rest || 30;
+  const offset = 578 * (1 - p.remaining / total);
+  ring.setAttribute('stroke-dashoffset', offset);
+  // icon
+  $('#playIcon').innerHTML = p.paused ? '<path d="M8 5v14l11-7z"/>' : '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
+  // 按钮状态
+  $('#playerPrev').style.opacity = p.idx === 0 ? '0.4' : '1';
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60), sec = s % 60;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+function startTimer() {
+  stopTimer();
+  const p = APP.state.player;
+  p.timer = setInterval(() => {
+    if (p.paused) return;
+    p.remaining--;
+    if (p.remaining <= 0) {
+      if (p.phase === 'work') {
+        // 进入休息或下一步
+        if (p.idx < p.items.length - 1) {
+          p.phase = 'rest';
+          p.remaining = APP.state.custom.rest || 30;
+          toast('开始休息');
+          playBeep('rest');
+        } else {
+          finishRoutine();
+          return;
+        }
+      } else {
+        // 休息结束，进入下一个动作
+        p.phase = 'work';
+        p.idx++;
+        p.remaining = getWorkSec(p.items[p.idx]);
+        toast('下一个动作');
+        playBeep('work');
+      }
+      renderPlayer();
+    } else {
+      $('#timerText').textContent = formatTime(p.remaining);
+      const total = p.phase === 'work' ? getWorkSec(p.items[p.idx]) : APP.state.custom.rest || 30;
+      $('#timerRing').setAttribute('stroke-dashoffset', 578 * (1 - p.remaining / total));
+      if (p.remaining <= 3) playBeep('tick');
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  const p = APP.state.player;
+  if (p.timer) clearInterval(p.timer);
+  p.timer = null;
+}
+
+function playBeep(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = type === 'rest' ? 520 : type === 'work' ? 880 : 660;
+    g.gain.value = 0.05;
+    o.start();
+    setTimeout(() => { o.stop(); ctx.close(); }, 120);
+  } catch(e) {}
+}
+
+function finishRoutine() {
+  stopTimer();
+  const p = APP.state.player;
+  const totalSec = Math.round((Date.now() - p.startedAt) / 1000);
+  const totalMin = Math.round(totalSec / 60);
+  const kcal = Math.round(totalSec / 60 * 6);
+  // 入库
+  const today = new Date();
+  const record = {
+    id: 'r_' + Date.now(),
+    date: dateKey(today),
+    dateStr: `${today.getMonth()+1}/${today.getDate()} 周${['日','一','二','三','四','五','六'][today.getDay()]}`,
+    name: p.name,
+    duration: Math.max(1, totalMin),
+    kcal,
+    items: p.items.map(e => e.slug),
+    icon: p.items.length > 5 ? '⚡' : '✓',
+    color: 'rgba(255,138,168,0.25)'
+  };
+  DB.records.unshift(record);
+  DB.stats.minutes += record.duration;
+  DB.stats.kcal += record.kcal;
+  // 唯一训练天数
+  const trainedDays = new Set(DB.records.map(r => r.date));
+  DB.stats.days = trainedDays.size;
+  Storage.save(DB);
+
+  $('#completeSub').textContent = `完成「${p.name}」`;
+  $('#completeDuration').textContent = totalMin + ' 分';
+  $('#completeKcal').textContent = kcal;
+  $('#completeCount').textContent = p.items.length;
+  $('#completeOverlay').classList.add('active');
+}
+
+function closePlayer() {
+  stopTimer();
+  APP.state.player = { active: false };
+  $('#player').classList.remove('active');
+  $('#completeOverlay').classList.remove('active');
+}
+
+/* ---------- 绑定播放器按钮 ---------- */
+function bindPlayer() {
+  $('#playerClose').onclick = () => {
+    if (confirm('结束当前训练？进度将不会保存。')) closePlayer();
+  };
+  $('#playerToggle').onclick = () => {
+    APP.state.player.paused = !APP.state.player.paused;
+    renderPlayer();
+  };
+  $('#playerNext').onclick = () => {
+    const p = APP.state.player;
+    if (p.idx < p.items.length - 1) {
+      p.idx++;
+      p.phase = 'work';
+      p.remaining = getWorkSec(p.items[p.idx]);
+      renderPlayer();
+    }
+  };
+  $('#playerPrev').onclick = () => {
+    const p = APP.state.player;
+    if (p.idx > 0) {
+      p.idx--;
+      p.phase = 'work';
+      p.remaining = getWorkSec(p.items[p.idx]);
+      renderPlayer();
+    }
+  };
+  $('#completeClose').onclick = () => { closePlayer(); showScreen('records'); };
+  $('#completeAgain').onclick = () => {
+    $('#completeOverlay').classList.remove('active');
+    startRoutine(APP.state.player.items, APP.state.player.name);
+  };
+}
+
+/* ---------- 全局事件 ---------- */
+function bindGlobal() {
+  // 屏幕跳转（data-target）
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('[data-target]');
+    if (!el) return;
+    const target = el.dataset.target;
+    // 收藏按钮
+    if (el.dataset.fav) {
+      e.stopPropagation();
+      toggleFavorite(el.dataset.fav);
+      // 同步视觉
+      const filled = DB.favorites.includes(el.dataset.fav);
+      el.setAttribute('fill', filled ? '#FF8AA8' : 'none');
+      el.setAttribute('stroke', filled ? '#FF8AA8' : '#8AA1BF');
+      return;
+    }
+    // 列表项跳转
+    if (el.dataset.go === 'detail') {
+      showDetail(el.dataset.slug);
+      return;
+    }
+    if (['home','search','detail','records','schedule','profile','custom'].includes(target)) {
+      if (target === 'custom') renderCustom();
+      showScreen(target);
+    }
+  });
+
+  // 点击空白关闭 modal
+  document.addEventListener('click', (e) => {
+    if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+      e.target.classList.remove('active');
+    }
+  });
+
+  // 重置按钮（自定义训练屏幕）
+  $('#resetBtn').onclick = () => {
+    if (confirm('清空所有数据？')) {
+      localStorage.removeItem('tidal_app_v1');
+      DB = Storage.load();
+      renderProfile();
+      toast('已清空');
+    }
+  };
+}
+
+/* ---------- 主入口 ---------- */
+async function load() {
+  // 1. 加载 manifest
+  try {
+    const res = await fetch(MANIFEST_URL);
+    const data = await res.json();
+    APP.data.exercises = data;
+    console.log(`[潮汐] 加载了 ${data.length} 个动作`);
+  } catch (e) {
+    console.error('加载失败', e);
+    toast('数据加载失败，请检查网络');
+    return;
+  }
+
+  // 2. 初始化 UI
+  bindGlobal();
+  bindPlayer();
+  renderHome();
+
+  // 3. 启动时刷新时间
+  const updateClock = () => {
+    const d = new Date();
+    $('#homeClock').textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  };
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  // 4. 模拟历史数据（首次访问时）
+  if (!DB.records.length && !localStorage.getItem('tidal_seeded')) {
+    seedDemoData();
+    localStorage.setItem('tidal_seeded', '1');
+  }
+
+  // 5. 渲染当前屏幕
+  showScreen('home');
+}
+
+function seedDemoData() {
+  const today = new Date();
+  const seed = [
+    { offset: 0, name: '全身燃脂训练', items: 8, dur: 45, kcal: 320, color: 'rgba(61,111,230,0.25)', icon: '⚡' },
+    { offset: 1, name: '胸肌强化训练', items: 5, dur: 38, kcal: 280, color: 'rgba(255,138,168,0.25)', icon: '♥' },
+    { offset: 2, name: '核心稳定训练', items: 4, dur: 30, kcal: 210, color: 'rgba(0,194,209,0.25)', icon: '◆' },
+    { offset: 3, name: '下肢力量训练', items: 6, dur: 50, kcal: 360, color: 'rgba(255,213,128,0.3)', icon: '✦' },
+    { offset: 5, name: '背部雕刻训练', items: 5, dur: 40, kcal: 290, color: 'rgba(176,108,255,0.18)', icon: '✧' },
+    { offset: 7, name: '肩部塑形训练', items: 4, dur: 28, kcal: 200, color: 'rgba(255,138,168,0.25)', icon: '✶' }
+  ];
+  seed.forEach(s => {
+    const d = new Date(today); d.setDate(d.getDate() - s.offset);
+    DB.records.push({
+      id: 'seed_' + s.offset,
+      date: dateKey(d),
+      dateStr: `${d.getMonth()+1}/${d.getDate()} 周${['日','一','二','三','四','五','六'][d.getDay()]}`,
+      name: s.name, duration: s.dur, kcal: s.kcal, items: new Array(s.items).fill('push-up'),
+      icon: s.icon, color: s.color
+    });
+  });
+  // 已收藏
+  DB.favorites = ['push-up', 'plank', 'dumbbell-bench-press'];
+  // 一个训练组合
+  DB.routines.push({
+    id: 'r_seed_1',
+    name: '胸 + 核心混合',
+    rest: 30,
+    items: [
+      { slug: 'dumbbell-bench-press', sets: 4, reps: '12', rest: 60 },
+      { slug: 'push-up', sets: 3, reps: '12', rest: 45 },
+      { slug: 'plank', sets: 3, reps: '45', rest: 30 }
+    ],
+    created: Date.now()
+  });
+  // 排程
+  DB.schedule[dateKey(today)] = 'r_seed_1';
+  // 统计
+  const trainedDays = new Set(DB.records.map(r => r.date));
+  DB.stats = {
+    days: trainedDays.size,
+    minutes: DB.records.reduce((s, r) => s + r.duration, 0),
+    kcal: DB.records.reduce((s, r) => s + r.kcal, 0)
+  };
+  Storage.save(DB);
+}
+
+// 启动
+load().catch(err => {
+  console.error(err);
+  document.body.innerHTML = `<div style="color:#fff; padding:40px; text-align:center;">启动失败：${err.message}<br><br>请刷新重试</div>`;
+});
+</script>
+</body>
+</html>
