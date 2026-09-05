@@ -128,6 +128,25 @@
   .list-item:nth-child(7), .menu-item:nth-child(7), .badge:nth-child(7) { animation-delay: .24s; }
   .list-item:nth-child(8), .menu-item:nth-child(8), .badge:nth-child(8) { animation-delay: .28s; }
 
+  /* ===== 真实设备 / PWA standalone：去掉手机壳，全屏铺满 ===== */
+  @media (hover: none) and (pointer: coarse), (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+    body {
+      background: var(--bg-0);
+      padding: 0;
+    }
+    body::before { display: none; }
+    .phone {
+      width: 100vw; height: 100vh; height: 100dvh;
+      border-radius: 0; border: none;
+      background: var(--bg-0);
+      padding: 0; box-shadow: none;
+    }
+    .phone-inner { border-radius: 0; }
+    .statusbar { display: none; }
+    /* 无状态栏时，给内容补顶部安全区 */
+    .content { padding-top: calc(12px + var(--sai-top)); }
+  }
+
   /* ===== 状态栏 ===== */
   .statusbar {
     height: 50px; padding: calc(14px + var(--sai-top)) 28px 0;
@@ -2843,7 +2862,7 @@ load().catch(err => {
 // PWA Service Worker 注册（cache-buster + 强制新 SW 接管）
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js?v=v2.8').then(reg => {
+    navigator.serviceWorker.register('./sw.js?v=v2.9').then(reg => {
       // 如果有新 SW 等待激活，强制接管
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
       reg.addEventListener('updatefound', () => {
