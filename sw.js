@@ -1,5 +1,5 @@
 /* 潮汐训练 Service Worker - 离线优先缓存 */
-const VERSION = 'v2.1';
+const VERSION = 'v2.4';
 const CACHE = `tidal-${VERSION}`;
 const CORE = [
   './',

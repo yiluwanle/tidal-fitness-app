@@ -688,37 +688,39 @@
 
   /* ===== 我的页面 ===== */
   .profile-hero {
-    border-radius: 22px; padding: 18px 18px 16px;
+    border-radius: 20px; padding: 14px 16px;
     background: var(--ocean-grad);
     color: #fff; position: relative; overflow: hidden;
-    box-shadow: 0 16px 36px rgba(14, 165, 183, 0.3);
+    box-shadow: 0 14px 32px rgba(14, 165, 183, 0.3);
   }
   .profile-hero::before {
     content: ''; position: absolute; right: -40px; top: -40px;
-    width: 200px; height: 200px;
+    width: 180px; height: 180px;
     background: radial-gradient(circle, rgba(255,138,168,0.3), transparent 60%);
   }
-  .profile-row { display: flex; align-items: center; gap: 14px; position: relative; z-index: 2; }
+  .profile-row { display: flex; align-items: center; gap: 12px; position: relative; z-index: 2; }
   .profile-avatar {
-    width: 54px; height: 54px; border-radius: 50%;
+    width: 48px; height: 48px; border-radius: 50%;
     background: rgba(255,255,255,0.2);
     border: 2px solid rgba(255,255,255,0.4);
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px; font-weight: 800;
+    font-size: 20px; font-weight: 800;
     flex-shrink: 0;
   }
-  .profile-name { font-size: 19px; font-weight: 800; letter-spacing: -0.3px; }
-  .profile-tag { font-size: 12px; opacity: 0.85; margin-top: 3px; }
+  .profile-name { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; line-height: 1.1; }
+  .profile-tag { font-size: 11px; opacity: 0.85; margin-top: 3px; letter-spacing: 0.2px; }
+  .profile-meta { flex: 1; min-width: 0; }
   .profile-edit {
-    position: absolute; right: 18px; top: 16px;
-    padding: 5px 12px; border-radius: 10px;
+    position: absolute; right: 14px; top: 14px;
+    padding: 4px 10px; border-radius: 8px;
     background: rgba(255,255,255,0.2); color: #fff;
     font-size: 11px; font-weight: 700;
     cursor: pointer; z-index: 2;
     backdrop-filter: blur(4px);
   }
+  /* 紧凑 stats — 横排小字 */
   .profile-stats {
-    display: flex; margin-top: 14px; gap: 0;
+    display: flex; margin-top: 12px; gap: 0;
     position: relative; z-index: 2;
   }
   .profile-stat {
@@ -726,7 +728,7 @@
     border-right: 1px solid rgba(255,255,255,0.2);
   }
   .profile-stat:last-child { border-right: none; }
-  .profile-stat .v { font-size: 19px; font-weight: 800; line-height: 1.1; }
+  .profile-stat .v { font-size: 17px; font-weight: 800; line-height: 1; }
   .profile-stat .l { font-size: 10px; opacity: 0.85; margin-top: 2px; letter-spacing: 0.3px; }
 
   .badge-grid {
