@@ -21,6 +21,11 @@ self.addEventListener('install', e => {
   );
 });
 
+// 客户端主动通知：新版本可接管
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
