@@ -722,18 +722,18 @@
     cursor: pointer; z-index: 2;
     backdrop-filter: blur(4px);
   }
-  /* 紧凑 stats — 横排一行 */
+  /* 紧凑 stats — 单行内嵌（数字+单位同行，永不被裁） */
   .profile-stats {
-    display: flex; margin-top: 10px; gap: 0;
+    display: flex; gap: 4px; margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.15);
     position: relative; z-index: 2;
+    font-size: 11.5px; opacity: 0.95;
   }
-  .profile-stat {
-    flex: 1; text-align: center;
-    border-right: 1px solid rgba(255,255,255,0.2);
+  .profile-stats span { flex: 1; text-align: center; letter-spacing: 0.1px; }
+  .profile-stats span b {
+    font-size: 15px; font-weight: 800; letter-spacing: -0.3px;
+    margin-right: 2px;
   }
-  .profile-stat:last-child { border-right: none; }
-  .profile-stat .v { font-size: 15px; font-weight: 800; line-height: 1; }
-  .profile-stat .l { font-size: 10px; opacity: 0.85; margin-top: 2px; letter-spacing: 0.3px; }
 
   .badge-grid {
     display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;
@@ -1295,9 +1295,9 @@
               </div>
             </div>
             <div class="profile-stats" data-page-node-id="XYkmwS97skeazUmY3deDmS">
-              <div class="profile-stat" data-page-node-id="l0pnYHNXp9ohKVdt132vNs"><div class="v" id="profileDays" data-page-node-id="d8VxtD4AAEHOsG47UhOdF5">0</div><div class="l" data-page-node-id="WgBEvuMghOvJHLQkJZNIVs">训练天数</div></div>
-              <div class="profile-stat" data-page-node-id="jlLfqybpkC9oz9N5Mv0yCe"><div class="v" id="profileMinutes" data-page-node-id="OM9fAnQfgbtg9SFXphr2sf">0</div><div class="l" data-page-node-id="uMMSPuia7k54DesvJPWcvi">总分钟</div></div>
-              <div class="profile-stat" data-page-node-id="669qYI1pI4ZEJT66vs3g3Q"><div class="v" id="profileKcal" data-page-node-id="i76D4wjDv0tBD2oRmygaN5">0</div><div class="l" data-page-node-id="3nYqKoSgXV4UfWxjv4t2Rr">总千卡</div></div>
+              <span data-page-node-id="l0pnYHNXp9ohKVdt132vNs"><b id="profileDays" data-page-node-id="d8VxtD4AAEHOsG47UhOdF5">0</b>天</span>
+              <span data-page-node-id="jlLfqybpkC9oz9N5Mv0yCe"><b id="profileMinutes" data-page-node-id="OM9fAnQfgbtg9SFXphr2sf">0</b>分</span>
+              <span data-page-node-id="669qYI1pI4ZEJT66vs3g3Q"><b id="profileKcal" data-page-node-id="i76D4wjDv0tBD2oRmygaN5">0</b>千卡</span>
             </div>
           </div>
 
@@ -2843,10 +2843,11 @@ load().catch(err => {
   document.body.innerHTML = `<div style="color:#fff; padding:40px; text-align:center;">启动失败：${err.message}<br><br>请刷新重试</div>`;
 });
 
-// PWA Service Worker 注册
+// PWA Service Worker 注册（用 cache-buster URL 让浏览器每次识别为新 SW，立即接管旧缓存）
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW 注册失败:', err));
+    // 用版本号 query 字符串：每次发版不同 → 浏览器识别为新 SW → 立即 install + skipWaiting + activate
+    navigator.serviceWorker.register('./sw.js?v=v2.6').catch(err => console.warn('SW 注册失败:', err));
   });
 }
 </script>
