@@ -3,7 +3,7 @@
 <head data-page-node-id="aWUavO1AfEa8X506ceZxWV">
 <meta charset="UTF-8" data-page-node-id="xktgqJLyuLLPpCaWWfARgG" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="mDrUtRU1j7IwgxQo5yxZqr" />
-<title>潮汐训练 · Tidal</title>
+<title>潮汐训练 · Tidal 健身</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" data-page-node-id="D6ncvGJimN5mcOcHTPEeef">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin data-page-node-id="nzUooYCrG3ORDMs4RkL0D5">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" data-page-node-id="AthGfjDn9o5eGjYsJFJJSb">
@@ -217,6 +217,18 @@
     box-shadow: var(--shadow-1);
   }
 
+  /* ===== 筛选分组（部位 / 器械 / 类型） ===== */
+  .filter-group { display: flex; flex-direction: column; gap: 8px; }
+  .filter-label {
+    font-size: 12px; font-weight: 800; color: var(--ink-2);
+    letter-spacing: 1px; display: flex; align-items: center; gap: 6px;
+    margin-top: 2px;
+  }
+  .filter-label::before {
+    content: ''; width: 3px; height: 12px; border-radius: 2px;
+    background: var(--primary-grad); flex-shrink: 0;
+  }
+
   /* ===== 今日推荐（守岸人浅蓝渐变） ===== */
   .hero-card {
     border-radius: 24px; padding: 20px; min-height: 160px;
@@ -278,12 +290,17 @@
   }
   .list-item:active { transform: scale(0.99); }
   .thumb {
-    width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
-    background: linear-gradient(135deg, #E0EBFA 0%, #D8F0F2 100%);
+    width: 60px; height: 60px; border-radius: 16px; flex-shrink: 0;
+    background: linear-gradient(160deg, #0F2A4A 0%, #0B5E72 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 4px 12px rgba(9, 44, 74, 0.18);
     overflow: hidden; display: flex; align-items: center; justify-content: center;
-    padding: 4px;
+    padding: 5px;
   }
-  .thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .thumb img {
+    width: 100%; height: 100%; object-fit: contain;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3)) brightness(1.02) contrast(1.02);
+  }
   .item-info { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .item-title {
     font-size: 15px; font-weight: 700; color: var(--ink-1);
@@ -331,16 +348,20 @@
   .stat .v { font-size: 26px; font-weight: 800; color: var(--accent); }
   .stat .k { font-size: 11px; color: var(--ink-3); font-weight: 600; }
 
-  /* ===== 演示区 ===== */
+  /* ===== 演示区（深色画布展示白色剪影） ===== */
   .demo-main {
-    width: 100%; height: 240px;
+    width: 100%; height: 260px;
     border-radius: 22px;
-    background: linear-gradient(135deg, #DCE9FA 0%, #D8F0F2 100%);
+    background: radial-gradient(120% 120% at 80% 20%, #14405F 0%, #0B1E3A 60%, #061228 100%);
     display: flex; align-items: center; justify-content: center;
     overflow: hidden; position: relative;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255,255,255,0.09);
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.35), 0 10px 30px rgba(6, 18, 40, 0.25);
   }
-  .demo-main img { width: 78%; height: 78%; object-fit: contain; }
+  .demo-main img {
+    width: 82%; height: 82%; object-fit: contain;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.4)) brightness(1.05);
+  }
   .demo-main .play-btn {
     position: absolute; bottom: 14px; right: 14px;
     width: 44px; height: 44px; border-radius: 50%;
@@ -348,18 +369,20 @@
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 6px 16px rgba(61, 111, 230, 0.4);
     cursor: pointer;
+    z-index: 2;
   }
   .demo-steps { display: flex; gap: 10px; margin-top: 4px; }
   .demo-step {
     flex: 1; border-radius: 14px;
-    background: rgba(255,255,255,0.7);
+    background: linear-gradient(160deg, #0F2A4A 0%, #0B5E72 100%);
     padding: 8px;
     display: flex; flex-direction: column; align-items: center; gap: 4px;
     cursor: pointer; border: 2px solid transparent;
   }
-  .demo-step.active { border-color: var(--accent); background: rgba(255,255,255,0.95); }
-  .demo-step img { width: 100%; height: 64px; object-fit: contain; }
-  .demo-step span { font-size: 11px; color: var(--ink-3); font-weight: 700; }
+  .demo-step.active { border-color: var(--accent); background: linear-gradient(160deg, #12355E 0%, #0D6E85 100%); }
+  .demo-step img { width: 100%; height: 64px; object-fit: contain; filter: brightness(1.04); }
+  .demo-step span { font-size: 11px; color: rgba(255,255,255,0.75); font-weight: 700; }
+  .demo-step.active span { color: #fff; }
 
   .demo-play {
     align-self: flex-start; padding: 10px 16px; border-radius: 14px;
@@ -511,7 +534,7 @@
   }
   .player.active { display: flex; }
   .player-hero {
-    height: 360px; background: var(--ocean-grad);
+    height: 300px; background: var(--ocean-grad);
     border-radius: 0 0 32px 32px; padding: 20px 24px;
     color: #fff; position: relative; overflow: hidden;
     display: flex; flex-direction: column; gap: 12px;
@@ -532,9 +555,17 @@
   .player-hero .step-info { display: flex; justify-content: space-between; font-size: 12px; opacity: 0.95; font-weight: 600; }
   .player-pose {
     flex: 1; display: flex; align-items: center; justify-content: center;
-    margin: 16px 0; padding: 16px;
+    margin: 14px 20px 0; padding: 16px;
+    background: radial-gradient(120% 120% at 75% 20%, #14405F 0%, #0B1E3A 60%, #061228 100%);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.09);
+    box-shadow: inset 0 0 60px rgba(0,0,0,0.35);
+    min-height: 200px;
   }
-  .player-pose img { width: 70%; max-height: 200px; object-fit: contain; filter: drop-shadow(0 12px 24px rgba(0,0,0,0.2)); }
+  .player-pose img {
+    width: 78%; max-height: 100%; object-fit: contain;
+    filter: drop-shadow(0 8px 18px rgba(0,0,0,0.45)) brightness(1.06);
+  }
 
   .player-meta {
     display: flex; flex-direction: column; gap: 6px; align-items: center;
@@ -869,12 +900,12 @@
           <div class="hero-card hot" id="todayHero" data-page-node-id="m4DHwfim73bUvaCSppHGVv">
             <div class="row sb" data-page-node-id="3XFXaqDFmgYAuaPu1s1zYc">
               <span class="tag" data-page-node-id="ptPG9fCSEcc8b2L3npN0lF">今日推荐</span>
-              <span class="tag" id="todayTag" data-page-node-id="rUAY8VfAtELKu93SEqumub">20 min</span>
+              <span class="tag" id="todayTag" data-page-node-id="rUAY8VfAtELKu93SEqumub">20 分钟</span>
             </div>
             <div style="position:relative; z-index:2;" data-page-node-id="pmv3SsE5ASDfB3VwkgAmi1">
               <h2 id="todayTitle" data-page-node-id="r2Jm2lGPhiW51tXXCd2Zqb">全身燃脂训练</h2>
               <div class="stat-row" style="margin-top:10px;" data-page-node-id="8GmkAsavB9xZEhJozWtGUr">
-                <span id="todayStat" data-page-node-id="QVgofVThBp7IOo5GG7bAH1">8 个动作 · 强度中等 · 约 320 kcal</span>
+                <span id="todayStat" data-page-node-id="QVgofVThBp7IOo5GG7bAH1">8 个动作 · 强度中等 · 约 320 千卡</span>
               </div>
               <div style="margin-top:14px;" data-page-node-id="Y9L1An6k7ApG1SriBuDxJj">
                 <span class="start-btn" id="todayStart" data-page-node-id="cX2wnZQWokElykbkclZkzj">开始训练</span>
@@ -917,23 +948,25 @@
             <span class="muted" id="searchCount" data-page-node-id="RVh1bwBZ9lz5fWxYq1aHbp">共 302 个动作</span>
           </div>
 
-          <div class="chips" id="muscleChips" data-page-node-id="HUxXoDbdUXKcdCq8znKdrs">
-            <div class="chip active" data-muscle="all" data-page-node-id="qmYmIIwe2NhFH6qyNAd1M4">全部</div>
+          <div class="filter-group">
+            <div class="filter-label">部位</div>
+            <div class="chips" id="muscleChips">
+              <div class="chip active" data-muscle="all">全部</div>
+            </div>
           </div>
 
-          <div class="seg" id="equipSeg" data-page-node-id="EoDU7C7Skl49aOc0xONW4s">
-            <div class="active" data-equip="all" data-page-node-id="B2652Nu8r5eH88IHyIb1IE">全部</div>
-            <div data-equip="Bodyweight" data-page-node-id="vsx5OMEk95FMMJ6XT5hdl7">自重</div>
-            <div data-equip="Dumbbell" data-page-node-id="gOUU25uNM02KHq8EWXAvmD">哑铃</div>
-            <div data-equip="Barbell" data-page-node-id="v5JO7GoyS5Y3xZPgN49dpt">杠铃</div>
-            <div data-equip="Machine" data-page-node-id="oohqn6Cbl4fOHGF2RDWWJw">器械</div>
+          <div class="filter-group">
+            <div class="filter-label">器械</div>
+            <div class="chips" id="equipChips">
+              <div class="chip active" data-equip="all">全部器械</div>
+            </div>
           </div>
 
-          <div class="seg" id="typeSeg" data-page-node-id="Ljbsml6z67eTMb1Idkp9Rf">
-            <div class="active" data-type="all" data-page-node-id="SDVqwsTQFYsFMIFeu4NSd2">全部</div>
-            <div data-type="weight_reps" data-page-node-id="o0xxL18CeVYGTM3SBl5pe7">力量</div>
-            <div data-type="bodyweight_reps" data-page-node-id="paNOIIZVpRteL6UDOlKrAL">徒手</div>
-            <div data-type="duration" data-page-node-id="K255BqLBrDhcK9UYzvv8SA">计时</div>
+          <div class="filter-group">
+            <div class="filter-label">类型</div>
+            <div class="chips" id="typeChips">
+              <div class="chip active" data-type="all">全部</div>
+            </div>
           </div>
 
           <div class="section-title" data-page-node-id="UmWDwYhTAYCAVZz6Bi2CC5">推荐 <span class="muted" style="font-size:12px; font-weight:500;" id="searchHint" data-page-node-id="Xn83G3n7GzdZWfWIQA6qge">基于装备和部位</span></div>
@@ -955,7 +988,7 @@
         <div class="statusbar" data-page-node-id="tPSkbzITLLLGdFMjhUKX80"><span data-page-node-id="5QkYJFIDqD0iAU2yEWvgiS">9:41</span><div class="battery" data-page-node-id="EDgCBGHDstQMrNPnuAK1u8"><span data-page-node-id="6H7CT7GmbrhRKaBWaGQk9P"></span></div></div>
         <div class="content" data-page-node-id="C5JzG9x5gFHNOG3SkTTcDh">
           <div class="topbar" data-page-node-id="EOgvBFK5XxvSmgsoTRSHEu">
-            <div class="row hot" data-target="search" style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.8); align-items:center; justify-content:center;" data-page-node-id="7YzwcDcSDhOrbrB5cAq0Ov">
+            <div class="row hot" id="detailBack" style="width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.8); align-items:center; justify-content:center;" data-page-node-id="7YzwcDcSDhOrbrB5cAq0Ov">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="1rhnx7AnMzSPve7DtnEM8s"><path d="M15 6l-6 6 6 6" data-page-node-id="iOrRit9oskygUkKXA3pVDd"/></svg>
             </div>
             <div data-page-node-id="ELXcakGS4fXehjy7BmedhR"></div>
@@ -1183,7 +1216,7 @@
               <div class="profile-avatar" data-page-node-id="BxpkWMykgOxo2hoFCbjdeF">漂</div>
               <div data-page-node-id="Jj11jylFnbmq4Xz9hhqU7E">
                 <div class="profile-name" data-page-node-id="CKdPmMqeXUDgo8ixeE05kr">漂泊者</div>
-                <div class="profile-tag" id="profileLevel" data-page-node-id="a5xnDC8xiGILBw222gk8ni">Lv.1 海洋见习守护</div>
+                <div class="profile-tag" id="profileLevel" data-page-node-id="a5xnDC8xiGILBw222gk8ni">一阶 · 海洋见习守护</div>
               </div>
             </div>
             <div class="profile-stats" data-page-node-id="XYkmwS97skeazUmY3deDmS">
@@ -1371,6 +1404,7 @@ const APP = {
   state: {
     screen: 'home',
     detail: null,
+    detailFrom: 'home',
     custom: { items: [], rest: 30, name: '' },
     filters: { muscle: 'all', equip: 'all', type: 'all', q: '' },
     homeCat: 'all',
@@ -1413,6 +1447,16 @@ const ZH = {
 function localizeMuscle(m) { return ZH.muscle[m] || m; }
 function localizeEquip(e) { return ZH.equipment[e] || e; }
 function localizeType(t) { return ZH.exerciseType[t] || t; }
+
+/* 类型 chips 中文标签（全局） */
+const TYPE_LABELS = {
+  'all': '全部',
+  'weight_reps': '力量',
+  'bodyweight_reps': '徒手',
+  'duration': '计时',
+  'distance_duration': '有氧',
+  'assisted_bodyweight': '辅助'
+};
 
 /* ---------- 难度自动判定 ---------- */
 function difficultyOf(ex) {
@@ -1581,7 +1625,7 @@ function renderHome() {
   const popular = APP.data.exercises.filter(e =>
     ['push-up', 'dumbbell-bench-press', 'plank', 'bench-press', 'incline-dumbbell-press',
      'squat', 'deadlift', 'pull-up', 'dumbbell-fly', 'crunch', 'russian-twist', 'mountain-climber',
-     'lunge', 'overhead-press', 'bicep-curl', 'dip'].includes(e.slug)
+     'walking-lunge', 'overhead-press', 'bicep-curl', 'dip'].includes(e.slug)
   ).slice(0, 12);
 
   const popularList = $('#popularList');
@@ -1600,30 +1644,38 @@ function renderHome() {
   const recommendList = $('#recommendList');
   recommendList.innerHTML = mixed.filter(Boolean).map(ex => itemHTML(ex, { tagClass: '' })).join('');
 
-  // chip 切换
+  // chip 切换 → 跳搜索页并按部位筛选
   $$('#homeChips .chip').forEach(chip => {
     chip.onclick = () => {
       $$('#homeChips .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       APP.state.homeCat = chip.dataset.cat;
+      const cat = chip.dataset.cat;
+      // 同步搜索筛选：肌肉 / 器械全清 / 类型全清，输入清空
+      APP.state.filters.muscle = cat === 'all' ? 'all' : cat;
+      APP.state.filters.equip = 'all';
+      APP.state.filters.type = 'all';
+      APP.state.filters.q = '';
+      const input = $('#searchInput');
+      if (input) { input.value = ''; $('#searchClear').style.display = 'none'; }
       showScreen('search');
     };
   });
 
   // 今日推荐 hero
   const todayMap = {
-    all: { title: '全身燃脂训练', items: ['push-up','squat','plank','crunch','lunge','mountain-climber','burpee','jumping-jack'], time: '25 min', kcal: 360 },
-    Chest: { title: '胸部强化训练', items: ['bench-press','incline-dumbbell-press','dumbbell-fly','push-up','dumbbell-bench-press','cable-fly','dip','pec-deck'], time: '32 min', kcal: 280 },
-    Back: { title: '背部雕刻训练', items: ['pull-up','barbell-row','lat-pulldown','seated-row','t-bar-row','face-pull','deadlift','shrug'], time: '30 min', kcal: 260 },
-    Legs: { title: '下肢力量训练', items: ['squat','walking-lunge','leg-press','romanian-deadlift','leg-extension','leg-curl','calf-raise','bulgarian-split-squat'], time: '35 min', kcal: 320 },
-    Core: { title: '核心稳定训练', items: ['plank','side-plank','crunch','russian-twist','mountain-climber','bicycle-crunch','hanging-leg-raise','cable-crunch'], time: '20 min', kcal: 200 },
-    Shoulders: { title: '肩部塑形训练', items: ['overhead-press','lateral-raise','front-raise','face-pull','rear-delt-fly','arnold-press','upright-row','shrug'], time: '28 min', kcal: 240 },
-    Biceps: { title: '手臂塑形训练', items: ['bicep-curl','hammer-curl','preacher-curl','concentration-curl','cable-curl','dip','tricep-pushdown','close-grip-bench-press'], time: '26 min', kcal: 220 }
+    all: { title: '全身燃脂训练', items: ['push-up','squat','plank','crunch','walking-lunge','mountain-climber','burpee','jumping-jack'], time: '25 分钟', kcal: 360 },
+    Chest: { title: '胸部强化训练', items: ['bench-press','incline-dumbbell-press','dumbbell-fly','push-up','dumbbell-bench-press','cable-fly','dip','pec-deck'], time: '32 分钟', kcal: 280 },
+    Back: { title: '背部雕刻训练', items: ['pull-up','barbell-row','lat-pulldown','seated-row','t-bar-row','face-pull','deadlift','shrug'], time: '30 分钟', kcal: 260 },
+    Legs: { title: '下肢力量训练', items: ['squat','walking-lunge','leg-press','romanian-deadlift','leg-extension','leg-curl','calf-raise','bulgarian-split-squat'], time: '35 分钟', kcal: 320 },
+    Core: { title: '核心稳定训练', items: ['plank','side-plank','crunch','russian-twist','mountain-climber','bicycle-crunch','hanging-leg-raise','cable-crunch'], time: '20 分钟', kcal: 200 },
+    Shoulders: { title: '肩部塑形训练', items: ['overhead-press','lateral-raise','front-raise','face-pull','rear-delt-fly','arnold-press','upright-row','shrug'], time: '28 分钟', kcal: 240 },
+    Biceps: { title: '手臂塑形训练', items: ['bicep-curl','hammer-curl','preacher-curl','concentration-curl','cable-curl','dip','tricep-pushdown','close-grip-bench-press'], time: '26 分钟', kcal: 220 }
   };
   const today = todayMap[APP.state.homeCat] || todayMap.all;
   $('#todayTitle').textContent = today.title;
   $('#todayTag').textContent = today.time;
-  $('#todayStat').textContent = `${today.items.length} 个动作 · 强度中等 · 约 ${today.kcal} kcal`;
+  $('#todayStat').textContent = `${today.items.length} 个动作 · 强度中等 · 约 ${today.kcal} 千卡`;
   $('#todayStart').onclick = () => startRoutine(today.items.map(getExercise).filter(Boolean), today.title);
 
   // 同步头像 -> 我的
@@ -1632,40 +1684,43 @@ function renderHome() {
 
 /* ---------- SEARCH 渲染 ---------- */
 function renderSearch() {
-  // 渲染肌肉 chips
-  const muscleChips = $('#muscleChips');
-  const muscles = ['all', ...new Set(APP.data.exercises.map(e => e.primaryMuscle))];
-  // 按典型肌群顺序显示
-  const order = ['all','Chest','Back','Lats','Shoulders','Biceps','Triceps','Core','Legs','Quads','Hamstrings','Glutes','Calves'];
-  muscleChips.innerHTML = order.filter(m => muscles.includes(m)).map(m =>
-    `<div class="chip ${m === 'all' ? 'active' : ''}" data-muscle="${m}">${m === 'all' ? '全部' : localizeMuscle(m)}</div>`
+  // 1. 器械 chips（全量 19 类，按常用排序）
+  const equipOrder = ['all','Bodyweight','Dumbbell','Barbell','Kettlebell','Machine','Cable','Resistance Band','Pull-up Bar','Cardio','Box','Stability Ball','Plate','Bench','Towel','Wall','Chair','Doorway'];
+  const equipSet = new Set(APP.data.exercises.map(e => e.equipment));
+  const equipChips = $('#equipChips');
+  equipChips.innerHTML = equipOrder.filter(eq => eq === 'all' || equipSet.has(eq)).map(eq =>
+    `<div class="chip ${APP.state.filters.equip === eq ? 'active' : ''}" data-equip="${eq}">${eq === 'all' ? '全部器械' : localizeEquip(eq)}</div>`
   ).join('');
 
-  // 绑定点击
-  $$('#muscleChips .chip').forEach(c => {
-    c.onclick = () => {
-      $$('#muscleChips .chip').forEach(x => x.classList.remove('active'));
-      c.classList.add('active');
-      APP.state.filters.muscle = c.dataset.muscle;
-      renderSearchList();
-    };
-  });
-  $$('#equipSeg div').forEach(c => {
-    c.onclick = () => {
-      $$('#equipSeg div').forEach(x => x.classList.remove('active'));
-      c.classList.add('active');
-      APP.state.filters.equip = c.dataset.equip;
-      renderSearchList();
-    };
-  });
-  $$('#typeSeg div').forEach(c => {
-    c.onclick = () => {
-      $$('#typeSeg div').forEach(x => x.classList.remove('active'));
-      c.classList.add('active');
-      APP.state.filters.type = c.dataset.type;
-      renderSearchList();
-    };
-  });
+  // 2. 肌肉 chips（按典型肌群顺序）
+  const muscleOrder = ['all','Chest','Back','Lats','Upper Back','Shoulders','Rear Delts','Biceps','Triceps','Forearms','Core','Legs','Quads','Hamstrings','Glutes','Calves','Adductors','Hips','Lower Back','Posterior Chain','Mobility'];
+  const muscleSet = new Set(APP.data.exercises.map(e => e.primaryMuscle));
+  const muscleChips = $('#muscleChips');
+  muscleChips.innerHTML = muscleOrder.filter(m => m === 'all' || muscleSet.has(m)).map(m =>
+    `<div class="chip ${APP.state.filters.muscle === m ? 'active' : ''}" data-muscle="${m}">${m === 'all' ? '全部' : localizeMuscle(m)}</div>`
+  ).join('');
+
+  // 3. 类型 chips
+  const typeChips = $('#typeChips');
+  const typeList = [['all','全部'],['weight_reps','力量'],['bodyweight_reps','徒手'],['duration','计时'],['distance_duration','有氧'],['assisted_bodyweight','辅助']];
+  typeChips.innerHTML = typeList.map(([t, label]) =>
+    `<div class="chip ${APP.state.filters.type === t ? 'active' : ''}" data-type="${t}">${label}</div>`
+  ).join('');
+
+  // 绑定点击（事件委托更稳）
+  const bindChips = (id, key) => {
+    document.getElementById(id).querySelectorAll('.chip').forEach(chip => {
+      chip.onclick = () => {
+        document.getElementById(id).querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+        chip.classList.add('active');
+        APP.state.filters[key] = chip.dataset[key];
+        renderSearchList();
+      };
+    });
+  };
+  bindChips('muscleChips', 'muscle');
+  bindChips('equipChips', 'equip');
+  bindChips('typeChips', 'type');
 
   // 搜索框
   const input = $('#searchInput');
@@ -1687,17 +1742,27 @@ function renderSearchList() {
   if (equip !== 'all') list = list.filter(e => e.equipment === equip);
   if (type !== 'all') list = list.filter(e => e.exerciseType === type);
   if (q) {
-    const Q = q.toLowerCase();
+    const Q = q.trim().toLowerCase();
     list = list.filter(e =>
+      (e.nameZh || e.name).toLowerCase().includes(Q) ||
       e.name.toLowerCase().includes(Q) ||
       e.slug.includes(Q) ||
-      e.primaryMuscle.toLowerCase().includes(Q) ||
+      localizeEquip(e.equipment).includes(Q) ||
       e.equipment.toLowerCase().includes(Q) ||
+      localizeMuscle(e.primaryMuscle).includes(Q) ||
+      e.primaryMuscle.toLowerCase().includes(Q) ||
       (e.secondaryMuscles || []).some(m => m.toLowerCase().includes(Q))
     );
   }
 
   $('#searchCount').textContent = `共 ${list.length} 个动作`;
+
+  // 顶部选中状态提示
+  const activeF = [];
+  if (equip !== 'all') activeF.push(localizeEquip(equip));
+  if (muscle !== 'all') activeF.push(localizeMuscle(muscle));
+  if (type !== 'all') activeF.push(TYPE_LABELS[type]);
+  $('#searchHint').textContent = activeF.length ? `已筛选：${activeF.join(' · ')}` : '基于装备和部位安排你的动作';
 
   const listEl = $('#searchList');
   if (!list.length) {
@@ -1705,12 +1770,12 @@ function renderSearchList() {
     return;
   }
   // 默认按「热门」（popular slug 优先）
-  const popularSlugs = new Set(['push-up','bench-press','squat','deadlift','pull-up','plank','dumbbell-bench-press','overhead-press','lunge','bicep-curl','crunch','mountain-climber','barbell-row','incline-dumbbell-press','dumbbell-fly']);
+  const popularSlugs = new Set(['push-up','bench-press','squat','deadlift','pull-up','plank','dumbbell-bench-press','overhead-press','walking-lunge','bicep-curl','crunch','mountain-climber','barbell-row','incline-dumbbell-press','dumbbell-fly']);
   list.sort((a, b) => {
     const pa = popularSlugs.has(a.slug) ? 1 : 0;
     const pb = popularSlugs.has(b.slug) ? 1 : 0;
     if (pa !== pb) return pb - pa;
-    return a.name.localeCompare(b.name);
+    return (a.nameZh || a.name).localeCompare(b.nameZh || b.name, 'zh');
   });
   listEl.innerHTML = list.slice(0, 80).map(ex => itemHTML(ex)).join('');
 }
@@ -1719,6 +1784,8 @@ function renderSearchList() {
 function showDetail(slug) {
   const ex = getExercise(slug);
   if (!ex) return;
+  // 记录来源屏（详情返回用）
+  if (APP.state.screen !== 'detail') APP.state.detailFrom = APP.state.screen;
   APP.state.detail = ex;
   const fav = DB.favorites.includes(slug);
 
@@ -1802,6 +1869,9 @@ function showDetail(slug) {
   $('#detailStartTrain').onclick = () => {
     startRoutine([ex], ex.nameZh || ex.name);
   };
+  // 返回来源屏（无来源则回首页）
+  const backBtn = $('#detailBack');
+  if (backBtn) backBtn.onclick = () => showScreen(APP.state.detailFrom || 'home');
 
   showScreen('detail');
 }
@@ -1959,6 +2029,7 @@ function startCustom() {
 function openAddModal() {
   const overlay = $('#addModal');
   overlay.classList.add('active');
+  overlay.querySelector('.modal-header h3').textContent = '添加动作';
   const render = (q = '') => {
     let list = APP.data.exercises;
     if (q) {
@@ -1973,7 +2044,7 @@ function openAddModal() {
         <div class="list-item hot" data-add="${ex_.slug}">
           <div class="thumb" style="width:42px; height:42px;"><img src="${assetUrl(ex_.slug, 1)}" alt=""></div>
           <div class="item-info">
-            <div class="item-title">${ex_.name}</div>
+            <div class="item-title">${ex_.nameZh || ex_.name}</div>
             <div class="item-meta"><span>${localizeEquip(ex_.equipment)}</span><span>·</span><span>${localizeMuscle(ex_.primaryMuscle)}</span></div>
           </div>
           ${added ? '<span class="tag-pill teal">已添加</span>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3D6FE6" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'}
@@ -2021,7 +2092,7 @@ function renderRecords() {
   const totalMin = monthRecords.reduce((s, r) => s + r.duration, 0);
   const totalKcal = monthRecords.reduce((s, r) => s + r.kcal, 0);
   const h = Math.floor(totalMin / 60), m = totalMin % 60;
-  $('#monthTotal').textContent = totalMin ? `${h}h ${m}m` : '0h 0m';
+  $('#monthTotal').textContent = totalMin ? `${h ? h + ' 小时 ' : ''}${m} 分钟` : '0 分钟';
   $('#monthKcal').textContent = totalKcal ? totalKcal.toLocaleString() : '0';
   $('#monthCount').textContent = monthRecords.length;
 
@@ -2140,8 +2211,8 @@ function renderSchedule() {
             <div style="width:30px; height:30px; border-radius:50%; background:var(--primary-grad); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px;">${i+1}</div>
             <div class="thumb" style="width:42px; height:42px;"><img src="${assetUrl(it.slug, 1)}" alt=""></div>
             <div class="item-info">
-              <div class="item-title">${ex.name}</div>
-              <div class="item-meta">${it.sets} 组 × ${it.reps} ${typeof it.reps === 'string' && /^\d+$/.test(it.reps) ? '次' : ''}</div>
+              <div class="item-title">${ex.nameZh || ex.name}</div>
+              <div class="item-meta">${it.sets} 组 × ${it.reps}${/^\d+$/.test(String(it.reps)) ? ' 次' : ''} · ${localizeEquip(ex.equipment)}</div>
             </div>
             <div class="item-dur">
               <div class="t">${formatSec((ex.exerciseType === 'duration' ? parseInt(it.reps) || 30 : 40) * it.sets)}</div>
@@ -2167,7 +2238,7 @@ function openSchedulePicker() {
   // 复用 add modal
   const overlay = $('#addModal');
   overlay.classList.add('active');
-  $('.modal-header h3', overlay).textContent = '选择训练组合';
+  overlay.querySelector('.modal-header h3').textContent = '选择训练组合';
   $('#addModalSearch').value = '';
   const render = (q = '') => {
     let list = DB.routines.slice();
@@ -2179,7 +2250,7 @@ function openSchedulePicker() {
         </div>
         <div class="item-info">
           <div class="item-title">${r.name}</div>
-          <div class="item-meta">${r.items.length} 个动作 · 组间 ${r.rest}s</div>
+          <div class="item-meta">${r.items.length} 个动作 · 组间 ${r.rest} 秒</div>
         </div>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8AA1BF" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
       </div>`).join('');
@@ -2195,8 +2266,8 @@ function openSchedulePicker() {
   };
   $('#addModalSearch').oninput = (e) => render(e.target.value);
   render();
-  // 重置 header
-  setTimeout(() => { $('.modal-header h3').textContent = '添加动作'; }, 0);
+  // 标题保持「选择训练组合」，下次打开添加动作弹窗时再改回
+  overlay._pickerMode = true;
 }
 
 /* ---------- PROFILE 渲染 ---------- */
@@ -2205,11 +2276,11 @@ function renderProfile() {
   $('#profileMinutes').textContent = DB.stats.minutes;
   $('#profileKcal').textContent = DB.stats.kcal.toLocaleString();
   // 等级
-  const lvl = DB.stats.minutes < 60 ? 'Lv.1 海洋见习守护'
-    : DB.stats.minutes < 300 ? 'Lv.2 海岸巡游者'
-    : DB.stats.minutes < 900 ? 'Lv.3 深潮行者'
-    : DB.stats.minutes < 2000 ? 'Lv.4 海洋之心'
-    : 'Lv.5 守岸人之光';
+  const lvl = DB.stats.minutes < 60 ? '一阶 · 海洋见习守护'
+    : DB.stats.minutes < 300 ? '二阶 · 海岸巡游者'
+    : DB.stats.minutes < 900 ? '三阶 · 深潮行者'
+    : DB.stats.minutes < 2000 ? '四阶 · 海洋之心'
+    : '五阶 · 守岸人之光';
   $('#profileLevel').textContent = lvl;
 
   // 徽章
@@ -2306,9 +2377,9 @@ function renderPlayer() {
   $('#playerPhase').textContent = phaseLabel;
   $('#playerPose').src = assetUrl(ex.slug, 1);
   const next = p.items[p.idx + 1];
-  $('#playerNext').textContent = next ? `下一个: ${next.name}` : '本组最后一个';
+  $('#playerNext').textContent = next ? `下一个: ${next.nameZh || next.name}` : '本组最后一个';
   const meta = p.phase === 'work'
-    ? `${p.items.length} 个动作 · ${ex.equipment}`
+    ? `${p.idx + 1}/${p.items.length} · ${localizeEquip(ex.equipment)} · ${localizeMuscle(ex.primaryMuscle)}`
     : `休息 · 准备下一个动作`;
   $('#playerMeta').textContent = meta;
   // timer
@@ -2461,26 +2532,27 @@ function bindPlayer() {
 
 /* ---------- 全局事件 ---------- */
 function bindGlobal() {
-  // 屏幕跳转（data-target）
+  // 统一点击委托：tab 切换 / 列表项详情 / 收藏
   document.addEventListener('click', (e) => {
+    // 收藏按钮优先（避免触发父级跳转）
+    const favEl = e.target.closest('[data-fav]');
+    if (favEl) {
+      e.preventDefault();
+      e.stopPropagation();
+      const slug = favEl.dataset.fav;
+      toggleFavorite(slug);
+      return;
+    }
+    // 列表项跳转详情
+    const goEl = e.target.closest('[data-go]');
+    if (goEl && goEl.dataset.go === 'detail') {
+      showDetail(goEl.dataset.slug);
+      return;
+    }
+    // tab / 屏幕切换
     const el = e.target.closest('[data-target]');
     if (!el) return;
     const target = el.dataset.target;
-    // 收藏按钮
-    if (el.dataset.fav) {
-      e.stopPropagation();
-      toggleFavorite(el.dataset.fav);
-      // 同步视觉
-      const filled = DB.favorites.includes(el.dataset.fav);
-      el.setAttribute('fill', filled ? '#FF8AA8' : 'none');
-      el.setAttribute('stroke', filled ? '#FF8AA8' : '#8AA1BF');
-      return;
-    }
-    // 列表项跳转
-    if (el.dataset.go === 'detail') {
-      showDetail(el.dataset.slug);
-      return;
-    }
     if (['home','search','detail','records','schedule','profile','custom'].includes(target)) {
       if (target === 'custom') renderCustom();
       showScreen(target);
@@ -2507,12 +2579,21 @@ function bindGlobal() {
 
 /* ---------- 主入口 ---------- */
 async function load() {
-  // 1. 加载 manifest
+  // 1. 并行加载 manifest + 中文名表
   try {
-    const res = await fetch(MANIFEST_URL);
+    const [res, zhRes] = await Promise.all([
+      fetch(MANIFEST_URL),
+      fetch('./assets/zh-names.json').catch(() => null)
+    ]);
     const data = await res.json();
-    APP.data.exercises = data;
-    console.log(`[潮汐] 加载了 ${data.length} 个动作`);
+    const zhMap = zhRes ? await zhRes.json() : {};
+    // 注入中文名
+    APP.data.exercises = data.map(e => ({
+      ...e,
+      nameZh: zhMap[e.slug] || e.name
+    }));
+    // 保证装备字段也可按中文搜索
+    console.log(`[潮汐] 加载了 ${data.length} 个动作（中文名 ${Object.keys(zhMap).length} 条）`);
   } catch (e) {
     console.error('加载失败', e);
     toast('数据加载失败，请检查网络');
