@@ -1746,23 +1746,8 @@ function renderHome() {
   const recommendList = $('#recommendList');
   recommendList.innerHTML = mixed.filter(Boolean).map(ex => itemHTML(ex, { tagClass: '' })).join('');
 
-  // chip 切换 → 跳搜索页并按部位筛选
-  $$('#homeChips .chip').forEach(chip => {
-    chip.onclick = () => {
-      $$('#homeChips .chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      APP.state.homeCat = chip.dataset.cat;
-      const cat = chip.dataset.cat;
-      // 同步搜索筛选：肌肉 / 器械全清 / 类型全清，输入清空
-      APP.state.filters.muscle = cat === 'all' ? 'all' : cat;
-      APP.state.filters.equip = 'all';
-      APP.state.filters.type = 'all';
-      APP.state.filters.q = '';
-      const input = $('#searchInput');
-      if (input) { input.value = ''; $('#searchClear').style.display = 'none'; }
-      showScreen('search');
-    };
-  });
+  // 同步搜索筛选：肌肉 / 器械全清 / 类型全清，输入清空
+  // （已移除 homeChips — 部位筛选通过搜索屏完成）
 
   // 今日推荐 hero
   const todayMap = {
