@@ -662,14 +662,14 @@
   }
   .ctrl-btn svg { width: 24px; height: 24px; }
 
-  /* ===== 底部 Tab Bar ===== */
+  /* ===== 底部 Tab Bar（fixed 永远在视口底部） ===== */
   .bottomnav {
-    position: absolute; left: 0; right: 0; bottom: 0;
-    padding: 12px 21px calc(24px + var(--sai-bottom));
+    position: fixed; left: 0; right: 0; bottom: 0;
+    padding: 10px 21px calc(20px + var(--sai-bottom));
     background: linear-gradient(to top, rgba(234, 243, 251, 0.95) 60%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    z-index: 10;
+    z-index: 100;
   }
   .navpill {
     height: 62px; border-radius: 32px;
@@ -2843,7 +2843,7 @@ load().catch(err => {
 // PWA Service Worker 注册（cache-buster + 强制新 SW 接管）
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js?v=v2.7').then(reg => {
+    navigator.serviceWorker.register('./sw.js?v=v2.8').then(reg => {
       // 如果有新 SW 等待激活，强制接管
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
       reg.addEventListener('updatefound', () => {
